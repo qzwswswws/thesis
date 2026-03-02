@@ -1,0 +1,47 @@
+# LaTeX
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.pdf
+*.synctex.gz
+*.toc
+*.out
+*.bbl
+*.blg
+*.run.xml
+*.bcf
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Large Data (optional)
+# 04_Data/raw/
+# *.csv
+# *.mat
+# *.npy
