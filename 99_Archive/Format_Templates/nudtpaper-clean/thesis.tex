@@ -1,0 +1,63 @@
+%!TEX program = xelatex
+%!BIB program = bibtex
+\documentclass[doctor,ttf]{nudtpaper}
+% \addbibresource[location=local]{ref/refs.bib}
+\usepackage{mynudt}
+
+\classification{TP391}
+\serialno{22000000}
+\confidentiality{公开}
+\UDC{000}
+\title{国防科技大学毕业论文题目}
+\author{姓名}
+\zhdate{\zhtoday}
+\entitle{The Title of NUDT Thesis}
+\enauthor{Name}
+\endate{\entoday}
+\subject{学科专业}
+\ensubject{Subject Name}
+\researchfield{研究方向}
+\supervisor{导师姓名\quad{}教授}
+\cosupervisor{} % 没有就空着
+\ensupervisor{Prof. Supervisor Name}
+\encosupervisor{} % 没有就空着
+\papertype{工学}
+\enpapertype{Engineering}
+
+\begin{document}
+\graphicspath{{figures/}}
+\maketitle
+\frontmatter
+
+\let\cleardoublepage=\cleardoublepagewithhead
+\tableofcontents
+\listoftables
+\listoffigures
+
+\midmatter
+
+\input{data/abstract}
+\input{data/denotation}
+
+\mainmatter
+\input{data/chap01}
+\input{data/chap02}
+\input{data/ack}
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{参考文献}
+\ifisbiber
+{\hyphenpenalty=500 %
+\tolerance=9900 %
+\renewcommand{\baselinestretch}{1.35}
+\printbibliography[heading=bibliography, title=参考文献]
+}
+\else
+\bibliographystyle{bstutf8}
+\bibliography{ref/refs}
+\fi
+
+\input{data/resume}
+
+\end{document}

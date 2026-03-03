@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>舰载机飞行学员认知评估系统</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #5e72e4;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --success-dark: #3aa8d8;
+            --warning: #f8961e;
+            --warning-dark: #e07c00;
+            --danger: #f94144;
+            --danger-dark: #e03134;
+            --dark: #0a0a1a;
+            --darker: #050510;
+            --light: #f8f9fa;
+            --lighter: #ffffff;
+            --gray: #6c757d;
+            --gray-light: #adb5bd;
+            
+            /* 新增透明背景色 */
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --metric-bg: rgba(255, 255, 255, 0.85);
+            --sidebar-bg: rgba(10, 10, 26, 0.95);
+            --chart-bg: rgba(255, 255, 255, 0.88);
+        }
+        
+        body {
+            font-family: 'Roboto', 'Microsoft YaHei', sans-serif;
+            background-color: #e6e9f0;
+            margin: 0;
+            color: var(--dark);
+            line-height: 1.5;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(67, 97, 238, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(248, 150, 30, 0.05) 0%, transparent 20%);
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            min-height: 100vh;
+        }
+        
+        /* 高对比度透明侧边栏 */
+        .sidebar {
+            background: linear-gradient(160deg, var(--sidebar-bg), var(--darker));
+            color: var(--lighter);
+            padding: 0;
+            box-shadow: 5px 0 20px rgba(0,0,0,0.2);
+            backdrop-filter: blur(5px);
+        }
+        
+        .logo {
+            text-align: center;
+            padding: 35px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            background-color: rgba(0,0,0,0.3);
+        }
+        
+        .logo h3 {
+            margin: 0;
+            font-size: 2rem;  /* 超大字号 */
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        
+        .logo .subtitle {
+            font-size: 1.1rem;  /* 增大字号 */
+            opacity: 0.85;
+            margin-top: 10px;
+            font-weight: 400;
+        }
+        
+        .nav-item {
+            padding: 22px 40px;  /* 增大间距 */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            border-left: 6px solid transparent;
+            font-size: 1.3rem;  /* 超大字号 */
+            font-weight: 500;
+        }
+        
+        .nav-item i {
+            margin-right: 20px;  /* 增大图标间距 */
+            font-size: 1.5rem;   /* 超大图标 */
+            width: 28px;
+            text-align: center;
+        }
+        
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .nav-item.active {
+            background: rgba(67, 97, 238, 0.3);
+            border-left: 6px solid var(--primary-light);
+            font-weight: 600;
+        }
+        
+        /* 高对比度透明主内容区 */
+        .main-content {
+            padding: 40px;
+            overflow-y: auto;
+            background-color: rgba(248, 249, 250, 0.7);
+            backdrop-filter: blur(3px);
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 2.8rem;  /* 超大标题 */
+            font-weight: 800;
+            margin: 0;
+            color: var(--darker);
+            letter-spacing: 0.8px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 60px;  /* 超大头像 */
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: 700;
+            font-size: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        
+        .user-name {
+            font-weight: 700;
+            font-size: 1.4rem;  /* 增大用户名 */
+        }
+        
+        .user-role {
+            font-size: 1.1rem;
+            color: var(--gray);
+            font-weight: 400;
+        }
+        
+        /* 高对比度透明卡片 */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 35px;
+            margin-bottom: 35px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            border: 1px solid rgba(255,255,255,0.5);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(2px);
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            border-color: rgba(67, 97, 238, 0.3);
+        }
+        
+        .card-title {
+            font-size: 1.8rem;  /* 超大卡片标题 */
+            font-weight: 800;
+            margin-bottom: 30px;
+            color: var(--darker);
+            display: flex;
+            align-items: center;
+            letter-spacing: 0.5px;
+        }
+        
+        .card-title i {
+            margin-right: 20px;  /* 增大图标间距 */
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+        
+        /* 超大指标卡片 */
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .metric-card {
+            background: var(--metric-bg);
+            border-radius: 14px;
+            padding: 30px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+            border-left: 6px solid var(--primary);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+            backdrop-filter: blur(2px);
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+        }
+        
+        .metric-card.attention { border-left-color: var(--primary); }
+        .metric-card.fatigue { border-left-color: var(--warning); }
+        .metric-card.stress { border-left-color: var(--danger); }
+        .metric-card.performance { border-left-color: var(--success); }
+        
+        .metric-title {
+            font-size: 1.3rem;  /* 超大文本 */
+            color: var(--gray);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+        }
+        
+        .metric-value {
+            font-size: 3rem;  /* 超大数值 */
+            font-weight: 900;
+            margin: 20px 0;
+            letter-spacing: 0.8px;
+        }
+        
+        .metric-card.attention .metric-value { color: var(--primary); }
+        .metric-card.fatigue .metric-value { color: var(--warning); }
+        .metric-card.stress .metric-value { color: var(--danger); }
+        .metric-card.performance .metric-value { color: var(--success); }
+        
+        .metric-range {
+            font-size: 1.15rem;  /* 增大文本 */
+            color: var(--gray);
+            font-weight: 400;
+        }
+        
+        /* 超大图表容器 */
+        .chart-container {
+            position: relative;
+            height: 400px;  /* 增大图表高度 */
+            margin-top: 30px;
+            background: var(--chart-bg);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(0,0,0,0.05);
+            backdrop-filter: blur(2px);
+        }
+        
+        /* 超大表格 */
+        .task-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 1.2rem;  /* 超大表格字体 */
+        }
+        
+        .task-table th {
+            background-color: #f1f3f5;
+            padding: 22px;
+            text-align: left;
+            font-weight: 700;
+            color: var(--darker);
+            border-bottom: 3px solid #dee2e6;
+            font-size: 1.15rem;
+        }
+        
+        .task-table td {
+            padding: 22px;
+            border-bottom: 2px solid #e9ecef;
+            vertical-align: middle;
+            font-weight: 500;
+        }
+        
+        .task-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .task-table tr:hover td {
+            background-color: rgba(0,0,0,0.02);
+        }
+        
+        /* 超大徽章 */
+        .badge {
+            padding: 8px 16px;
+            border-radius: 24px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        
+        .badge-success {
+            background-color: rgba(76, 201, 240, 0.2);
+            color: var(--success-dark);
+            border: 2px solid rgba(76, 201, 240, 0.4);
+        }
+        
+        .badge-warning {
+            background-color: rgba(248, 150, 30, 0.2);
+            color: var(--warning-dark);
+            border: 2px solid rgba(248, 150, 30, 0.4);
+        }
+        
+        .badge-danger {
+            background-color: rgba(249, 65, 68, 0.2);
+            color: var(--danger-dark);
+            border: 2px solid rgba(249, 65, 68, 0.4);
+        }
+        
+        /* 超大状态指示器 */
+        .status-indicator {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            margin-right: 12px;
+            box-shadow: 0 0 8px rgba(0,0,0,0.3);
+        }
+        
+        .status-normal { background-color: var(--success); }
+        .status-warning { background-color: var(--warning); }
+        .status-danger { background-color: var(--danger); }
+        
+        /* 超粗进度条 */
+        .progress-container {
+            width: 100%;
+            height: 12px;
+            background-color: rgba(0,0,0,0.05);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 15px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .progress-attention { background-color: var(--primary); }
+        .progress-fatigue { background-color: var(--warning); }
+        .progress-stress { background-color: var(--danger); }
+        
+        /* 响应式设计调整 */
+        @media (max-width: 1200px) {
+            .dashboard {
+                grid-template-columns: 100px 1fr;
+            }
+            
+            .logo h3, .nav-item span, .logo .subtitle {
+                display: none;
+            }
+            
+            .nav-item {
+                justify-content: center;
+                padding: 25px 0;
+            }
+            
+            .nav-item i {
+                margin-right: 0;
+                font-size: 1.8rem;
+            }
+            
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .metric-value {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- 高对比度透明侧边导航 -->
+        <div class="sidebar">
+            <div class="logo">
+                <h3>飞行认知评估</h3>
+                <div class="subtitle">舰载机飞行员专用系统</div>
+            </div>
+            <div class="nav-item active">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>实时仪表盘</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-clipboard-check"></i>
+                <span>任务前评估</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-heartbeat"></i>
+                <span>生理监测</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-brain"></i>
+                <span>认知分析</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-chart-line"></i>
+                <span>训练报告</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-cog"></i>
+                <span>系统设置</span>
+            </div>
+        </div>
+        
+        <!-- 高对比度透明主内容区 -->
+        <div class="main-content">
+            <div class="header">
+                <h1>飞行学员认知状态监测系统</h1>
+                <div class="user-info">
+                    <div class="user-avatar">JD</div>
+                    <div>
+                        <div class="user-name">学员 JD-0428</div>
+                        <div class="user-role">舰载机飞行第3阶段</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 超大状态概览 -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-chart-pie"></i>当前认知状态概览
+                </div>
+                <div class="metric-grid">
+                    <div class="metric-card attention">
+                        <div class="metric-title">
+                            <i class="fas fa-bullseye" style="color: var(--primary); margin-right: 15px;"></i>
+                            注意力指数
+                        </div>
+                        <div class="metric-value" id="attention-value">87%</div>
+                        <div class="metric-range">正常范围: 75-95%</div>
+                        <div class="progress-container">
+                            <div class="progress-bar progress-attention" style="width: 87%"></div>
+                        </div>
+                    </div>
+                    <div class="metric-card fatigue">
+                        <div class="metric-title">
+                            <i class="fas fa-tired" style="color: var(--warning); margin-right: 15px;"></i>
+                            疲劳指数
+                        </div>
+                        <div class="metric-value" id="fatigue-value">63%</div>
+                        <div class="metric-range">警戒阈值: >70%</div>
+                        <div class="progress-container">
+                            <div class="progress-bar progress-fatigue" style="width: 63%"></div>
+                        </div>
+                    </div>
+                    <div class="metric-card stress">
+                        <div class="metric-title">
+                            <i class="fas fa-flushed" style="color: var(--danger); margin-right: 15px;"></i>
+                            压力指数
+                        </div>
+                        <div class="metric-value" id="stress-value">55%</div>
+                        <div class="metric-range">警戒阈值: >65%</div>
+                        <div class="progress-container">
+                            <div class="progress-bar progress-stress" style="width: 55%"></div>
+                        </div>
+                    </div>
+                    <div class="metric-card performance">
+                        <div class="metric-title">
+                            <i class="fas fa-star" style="color: var(--success); margin-right: 15px;"></i>
+                            任务表现
+                        </div>
+                        <div class="metric-value" id="performance-value">B+</div>
+                        <div class="metric-range">上次评估: A-</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 超大实时监测图表 -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-wave-square"></i>认知负荷实时变化 (过去30分钟)
+                </div>
+                <div class="chart-container">
+                    <canvas id="cognitiveChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- 超大任务评估表格 -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-clipboard-list"></i>近期训练任务评估
+                </div>
+                <table class="task-table">
+                    <thead>
+                        <tr>
+                            <th>任务编号</th>
+                            <th>任务类型</th>
+                            <th>持续时间</th>
+                            <th>认知负荷</th>
+                            <th>注意力</th>
+                            <th>疲劳度</th>
+                            <th>表现评级</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TR-2023-0425</td>
+                            <td><i class="fas fa-moon" style="margin-right: 12px;"></i>夜间着舰</td>
+                            <td>2小时15分</td>
+                            <td>
+                                <div class="status-indicator status-warning"></div>
+                                <strong>高</strong>
+                            </td>
+                            <td>82%</td>
+                            <td>68%</td>
+                            <td>B</td>
+                            <td><span class="badge badge-warning">需改进</span></td>
+                        </tr>
+                        <tr>
+                            <td>TR-2023-0423</td>
+                            <td><i class="fas fa-plane" style="margin-right: 12px;"></i>编队飞行</td>
+                            <td>1小时40分</td>
+                            <td>
+                                <div class="status-indicator status-normal"></div>
+                                <strong>中</strong>
+                            </td>
+                            <td>89%</td>
+                            <td>57%</td>
+                            <td>A-</td>
+                            <td><span class="badge badge-success">达标</span></td>
+                        </tr>
+                        <tr>
+                            <td>TR-2023-0420</td>
+                            <td><i class="fas fa-exclamation-triangle" style="margin-right: 12px;"></i>紧急处置</td>
+                            <td>45分钟</td>
+                            <td>
+                                <div class="status-indicator status-danger"></div>
+                                <strong>极高</strong>
+                            </td>
+                            <td>76%</td>
+                            <td>72%</td>
+                            <td>C+</td>
+                            <td><span class="badge badge-danger">需加强</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 增强的实时认知负荷数据模拟
+        let timeLabels = [];
+        let attentionData = [];
+        let fatigueData = [];
+        let stressData = [];
+        
+        // 生成过去30分钟的时间标签
+        for (let i = 29; i >= 0; i--) {
+            const date = new Date();
+            date.setMinutes(date.getMinutes() - i);
+            timeLabels.push(date.getMinutes() + ':' + (date.getSeconds() < 10 ? '0' : '') + date.getSeconds());
+            
+            // 生成更真实的趋势数据
+            const baseAttention = 85 + Math.sin(i/4.2) * 7 + (Math.random() * 3 - 1.5);
+            const baseFatigue = 60 + Math.sin(i/3.5) * 12 + (Math.random() * 3 - 1.5);
+            const baseStress = 50 + Math.cos(i/2.5) * 15 + (Math.random() * 3 - 1.5);
+            
+            attentionData.push(Math.max(60, Math.min(95, baseAttention)));
+            fatigueData.push(Math.max(40, Math.min(80, baseFatigue)));
+            stressData.push(Math.max(30, Math.min(75, baseStress)));
+        }
+        
+        // 初始化高对比度图表
+        const ctx = document.getElementById('cognitiveChart').getContext('2d');
+        const cognitiveChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: timeLabels,
+                datasets: [
+                    {
+                        label: '注意力指数',
+                        data: attentionData,
+                        borderColor: '#4361ee',
+                        backgroundColor: 'rgba(67, 97, 238, 0.2)',
+                        borderWidth: 4,  // 超粗线条
+                        tension: 0.3,
+                        fill: true,
+                        pointRadius: 0,
+                        pointHoverRadius: 7,
+                        borderCapStyle: 'round'
+                    },
+                    {
+                        label: '疲劳指数',
+                        data: fatigueData,
+                        borderColor: '#f8961e',
+                        backgroundColor: 'rgba(248, 150, 30, 0.2)',
+                        borderWidth: 4,  // 超粗线条
+                        tension: 0.3,
+                        fill: true,
+                        pointRadius: 0,
+                        pointHoverRadius: 7,
+                        borderCapStyle: 'round'
+                    },
+                    {
+                        label: '压力指数',
+                        data: stressData,
+                        borderColor: '#f94144',
+                        backgroundColor: 'rgba(249, 65, 68, 0.2)',
+                        borderWidth: 4,  // 超粗线条
+                        tension: 0.3,
+                        fill: true,
+                        pointRadius: 0,
+                        pointHoverRadius: 7,
+                        borderCapStyle: 'round'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 16,  // 超大图例字体
+                                weight: 'bold'
+                            },
+                            padding: 25,
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        bodyFont: {
+                            size: 15  // 超大工具提示字体
+                        },
+                        titleFont: {
+                            size: 16,
+                            weight: 'bold'
+                        },
+                        padding: 12,
+                        cornerRadius: 12
+                    }
+                },
+                scales: {
+                    y: {
+                        min: 0,
+                        max: 100,
+                        ticks: {
+                            font: {
+                                size: 14,  // 超大坐标轴字体
+                                weight: '600'
+                            },
+                            callback: function(value) {
+                                return value + '%';
+                            },
+                            padding: 10
+                        },
+                        grid: {
+                            color: 'rgba(0,0,0,0.07)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 13,  // 超大坐标轴字体
+                                weight: '600'
+                            },
+                            maxRotation: 45,
+                            minRotation: 45,
+                            padding: 10
+                        }
+                    }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
+                }
+            }
+        });
+        
+        // 增强的实时数据更新
+        function updateMetrics() {
+            // 更新指标卡片数据
+            const attentionValue = document.getElementById('attention-value');
+            const fatigueValue = document.getElementById('fatigue-value');
+            const stressValue = document.getElementById('stress-value');
+            const performanceValue = document.getElementById('performance-value');
+            
+            // 生成更符合认知规律的关联变化
+            const currentAttention = parseFloat(attentionValue.textContent);
+            const currentFatigue = parseFloat(fatigueValue.textContent);
+            const currentStress = parseFloat(stressValue.textContent);
+            
+            // 注意力变化 (受当前疲劳和压力影响)
+            const attentionVariation = (Math.random() * 4 - 2) * 
+                                      (1 - (currentFatigue/100 * 0.3 + currentStress/100 * 0.2));
+            
+            // 疲劳变化 (随时间递增且受注意力影响)
+            const fatigueVariation = (Math.random() * 3 + 0.5) * 
+                                   (1.1 - currentAttention/100);
+            
+            // 压力变化 (随机波动但受疲劳影响)
+            const stressVariation = (Math.random() * 3 - 1) * 
+                                  (0.8 + currentFatigue/100 * 0.4);
+            
+            let newAttention = currentAttention + attentionVariation;
+            let newFatigue = currentFatigue + fatigueVariation;
+            let newStress = currentStress + stressVariation;
+            
+            // 确保数值在合理范围内
+            newAttention = Math.max(60, Math.min(95, newAttention));
+            newFatigue = Math.max(40, Math.min(80, newFatigue));
+            newStress = Math.max(30, Math.min(75, newStress));
+            
+            // 更新指标值
+            attentionValue.textContent = Math.round(newAttention) + '%';
+            fatigueValue.textContent = Math.round(newFatigue) + '%';
+            stressValue.textContent = Math.round(newStress) + '%';
+            
+            // 根据指标计算表现评级
+            let performance = '';
+            const performanceScore = (newAttention * 0.5) - (newFatigue * 0.3) - (newStress * 0.2);
+            
+            if (performanceScore > 80) {
+                performance = ['A', 'A+', 'A-'][Math.floor(Math.random() * 3)];
+            } else if (performanceScore > 65) {
+                performance = ['B', 'B+', 'B-'][Math.floor(Math.random() * 3)];
+            } else {
+                performance = ['C', 'C+', 'C-'][Math.floor(Math.random() * 3)];
+            }
+            performanceValue.textContent = performance;
+            
+            // 更新进度条
+            document.querySelector('.progress-attention').style.width = newAttention + '%';
+            document.querySelector('.progress-fatigue').style.width = newFatigue + '%';
+            document.querySelector('.progress-stress').style.width = newStress + '%';
+            
+            // 更新图表数据
+            timeLabels.shift();
+            const now = new Date();
+            timeLabels.push(now.getMinutes() + ':' + (now.getSeconds() < 10 ? '0' : '') + now.getSeconds());
+            
+            attentionData.shift();
+            fatigueData.shift();
+            stressData.shift();
+            
+            // 新数据加入更真实的波动
+            attentionData.push(Math.max(60, Math.min(95, newAttention + (Math.random() * 2 - 1))));
+            fatigueData.push(Math.max(40, Math.min(80, newFatigue + (Math.random() * 2 - 1))));
+            stressData.push(Math.max(30, Math.min(75, newStress + (Math.random() * 2 - 1))));
+            
+            cognitiveChart.update();
+        }
+        
+        // 每3秒更新一次数据
+        setInterval(updateMetrics, 3000);
+        
+        // 初始加载
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("飞行学员认知评估系统已启动 - 超大字体高对比度版");
+            updateMetrics();
+            
+            // 添加背景动画效果
+            document.body.style.backgroundPosition = "0% 0%";
+            let pos = 0;
+            setInterval(() => {
+                pos = (pos + 0.1) % 100;
+                document.body.style.backgroundPosition = `${pos}% ${pos}%`;
+            }, 100);
+        });
+    </script>
+</body>
+</html>

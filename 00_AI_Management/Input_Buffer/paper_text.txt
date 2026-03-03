@@ -1,0 +1,317 @@
+Efficient Transformer-based Motor Imagery Classification for Edge-deployed Brain-Computer
+Interfaces
+
+1st Xianzhe Cheng College of Intelligence Science and Technology
+National University of Defense Technology Changsha, China
+chengxianzhecxz@nudt.edu.cn
+
+2nd Yifan Zhang College of Intelligence Science and Technology
+National University of Defense Technology Changsha, China
+zhangyifanedu@nudt.edu.cn
+
+3rd Yang Yu College of Intelligence Science and Technology
+National University of Defense Technology Changsha, China
+yuyangnudt@hotmail.com
+
+4th Yuhan Huang College of Intelligence Science and Technology
+National University of Defense Technology Changsha, China
+huangyuhan23@nudt.edu.cn
+
+5rd Anqi Wu College of Intelligence Science and Technology
+National University of Defense Technology Changsha, China
+wuanqi@nudt.edu.cn
+
+6th Ming Zhang College of Intelligence Science and Technology
+National University of Defense Technology Changsha, China
+zhangming@nudt.edu.cn
+
+7th Ling-Li Zeng College of Intelligence Science and Technology
+National University of Defense Technology Changsha, China
+zengphd@nudt.edu.cn
+
+Abstract--Motor Imagery (MI) based Brain-Computer Interfaces (BCIs) offer promising solutions for assistive technology and rehabilitation, but their practical deployment remains challenging due to the computational demands of high-performance decoding algorithms. This work introduces EdgeMIFormer, a novel Transformer-based architecture specifically optimized for edge-deployed MI-EEG classification. The proposed approach features a local attention fusion mechanism that effectively captures temporal dynamics in EEG signals while significantly reducing computational complexity. We implement comprehensive model optimization through quantization and structured pruning, maintaining classification performance while enabling efficient deployment. The optimized model is successfully deployed on the RK NPU, achieving real-time inference with latency of 31 ms. Experimental results on benchmark MI-EEG datasets demonstrate classification accuracy of 83.42%, outperforming comparable edge-deployed models by 15.28%. Our work bridges the gap between high-performance Transformer-based EEG decoding and practical edge deployment, enabling more accessible and portable MI-BCI systems for real-world applications.
+Index Terms--motor imagery, brain-computer interfaces, Transformer
+Corresponding author: zengphd@nudt.edu.cn
+
+I. INTRODUCTION
+Brain-Computer Interfaces (BCIs) based on Motor Imagery (MI) have emerged as a promising technology for restoring motor function in individuals with motor disabilities, providing an intuitive control paradigm for various assistive devices[1]. MI, which involves the mental simulation of physical movements without actual execution, generates distinctive neural patterns in the sensorimotor cortex that can be detected through electroencephalography (EEG)[2]. However, the widespread practical application of MI-BCI systems remains limited by two significant challenges: achieving high classification accuracy under varying conditions[3] [4]and enabling real-time inference on resource-constrained edge devices[5][6][7].
+Traditional MI-EEG classification approaches rely heavily on hand-crafted features such as common spatial patterns (CSP) combined with conventional machine learning algorithms. While these methods offer computational efficiency, they often fail to capture the complex, non-linear patterns inherent in EEG signals, resulting in suboptimal
+
+Efficient Transformer-based Motor Imagery Classification for Edge-deployed Brain-Computer Interfaces
+
+classification performance, particularly in challenging realworld environments. To address these limitations, deep learning approaches[8][9] have been increasingly adopted in recent years, demonstrating superior performance across various BCI applications.
+Among deep learning architectures, Transformer models have shown remarkable potential for time-series analysis, including EEG signals, due to their ability to capture long-range dependencies through self-attention mechanisms[9][10]. Recent studies have demonstrated the effectiveness of Transformerbased approaches for brain signal decoding tasks. Zhou et al. introduced the Informer model, which reduces the time complexity from O(N²) to O(N log N) using a sparse self-attention mechanism, enabling efficient processing of long time-series data[11]. Abbasi et al. proposed Global Time Attention (GTA) and Pseudo-Gaussian Self-Attention (TPS) mechanisms to enhance temporal information integration across modalities[10].
+Despite their impressive performance, Transformer-based models present significant deployment challenges for practical BCI applications. The computational complexity and memory requirements of these models typically necessitate powerful desktop computers or servers, limiting their portability and real-world utility[12][13]. This contradiction between model performance and deployment feasibility represents a major bottleneck for the advancement of practical MI-BCI systems, particularly for applications requiring mobility and independence from centralized computing resources. Recent advances in neural processing units (NPUs) have enabled the deployment of complex neural networks on embedded devices. However, efficiently implementing Transformer-based EEG decoding models on such hardware remains an open challenge due to the architectural complexity and computational demands of attention mechanisms. While model compression techniques such as quantization and pruning offer potential solutions, their application to Transformer-based EEG decoders has not been systematically explored in the context of edge deployment[9][14][15].
+To address these challenges, we propose EdgeMIFormer, a novel Transformer-based architecture specifically designed for MI-EEG classification on edge devices. The full workflow is depicted in Figure 1. Our approach makes the following key contributions:
+(1) We develop a specialized Transformer architecture that optimizes the global self attention mechanism into a local attention mechanism, allowing the model to focus more on key information in adjacent time domains, while significantly reducing the computational and access capacity of the self attention mechanism layer.
+(2) We implement a comprehensive model optimization pipeline including weight quantization and structured pruning that significantly reduces computational and memory requirements while maintaining classification performance.
+(3) We successfully deploy the optimized model on the RK NPU, achieving real-time edge inference with accuracy comparable to server-based implementations. Through
+
+extensive experiments on publicly available BCI Competition IV datasets 2a, we demonstrate that our approach achieves classification accuracy of 83.42%, with inference latency of 31 ms on edge devices.
+The proposed EdgeMIFormer bridges the gap between highperformance Transformer-based EEG decoding and practical edge deployment, enabling more accessible, portable, and user-friendly MI-BCI systems.
+II. METHODOLOGY
+A. Network Architecture
+Our network architecture integrates convolutional neural networks with transformer-based attention mechanisms through three principal components: a spatiotemporal feature embedding module, a hierarchical encoder with local attention fusion, and a classification decoder. The architecture addresses two fundamental challenges in MI-based EEG decoding - capturing long-range temporal dependencies in brain signals while maintaining sensitivity to localized spectral-spatial patterns.
+As shown in Figure 2, the spatial-temporal embedding process begins with raw EEG signals X  RC×T containing C electrode channels and T time samples. Through a dual-stage convolutional transformation, the input undergoes spatial filtering followed by temporal segmentation. In the spatial processing stage, parallel convolutional operations are applied across electrode dimensions to generate spatially enhanced feature maps.These operations employ learnable filters that model neurophysiological interactions between electrode pairs, effectively capturing functional connectivity patterns across cortical regions. Subsequent electrode-wise convolutional layers perform adaptive spatial compression through kernel operations spanning the full electrode dimension. This approach retains the spatial discriminability of traditional filtering methodologies while incorporating trainable parameters to enhance robustness against non-stationary signal variations. The temporal processing phase utilizes configurable sliding window mechanisms with feature aggregation to convert continuous signals into discrete temporal tokens. This adaptive segmentation strategy maintains temporal coherence while ensuring feature stability across successive windows. The final output comprises contextualized embedding sequences Z  RNp×dwhere Np denotes the dynamically determined number of temporal segments and d represents the predefined embedding dimensionality. This hierarchical processing cascade preserves essential spatiotemporal characteristics of raw EEG signals while producing semantically rich representations optimized for subsequent sequence modeling tasks. The hierarchical transformer encoder layer introduces three architectural innovations to enhance feature extraction. Local attention windows constrain attention computation to ±k temporal neighbors using weighting masks Mwindow, forcing focus on short-term temporal relationships critical for eventrelated desynchronization patterns. The local attention mechanism can be formulated as:
+
+Fig. 1. Pipeline of EdgeMIFormer development including training process, model deployment, and on-device inference. The framework integrates specialized model architecture with hardware-aware optimization techniques to enable efficient motor imagery classification on edge devices.
+
+Alocal(Q, K, V ) = Softmax QKT  Mwindow V (1) d
+where Q,K,V are query, key, and value matrices, respectively, and d is the dimensionality of the embedding space.
+The implementation of local attention mechanisms in Transformer architectures for EEG signal processing achieves computational efficiency improvements compared to conventional global self-attention approaches. By constraining the attention scope of each query to a fixed temporal window of size k, the local attention mechanism reduces computational complexity from O(Np2) to O(Npk), This approach ensures that the model captures both local and global temporal dependencies efficiently.
+The decoding module consists of six multi-head attention layers, with each layer consisting of a local attention layer and a feedforward layer. Residual connections are present before and after the local attention layer and the feedforward layer to stabilize the gradient flow. Due to the presence of local attention, the output of each multi-head attention layer retains temporal orderliness compared to models using global attention. The design of multi-layer attention enables the model to maintain long-range EEG analysis capabilities overall.
+Classification employs hierarchical feature aggregation combining global average pooling with multi-scale max pooling. The pooled features undergo layer normalization before projection through three ELU-activated dense layers , progressively mapping temporal embeddings to MI class probabilities. This multi-stage decoding strategy enables the model to leverage both localized temporal patterns and global contextual information for final classification decisions.
+B. Training Procedure
+The training framework combines domain-specific data augmentation, curriculum learning strategies, and hardware-aware
+
+optimization to achieve robust EEG decoding performance. Data augmentation addresses EEG's high inter-trial variability through two complementary techniques: Segmentation and Reconstruction (S&R) concatenates eight random 1-second segments from same-class trials, preserving event-related spectral perturbations (ERSP) patterns while increasing temporal diversity. SpecAugment applies time warping and random channel dropout to simulate electrode noise and placement variations.
+Optimization employs AdamW[16] with cosine annealing[17] combined with label smoothing to prevent overfitting on limited EEG datasets. The loss function is a combination of crossentropy loss LCE and maximum mean discrepancy LMMD to ensure both classification accuracy and domain invariance:
+
+L = LCE + 0.1LMMD
+
+(2)
+
+where L
+
+=
+
+-
+
+N i=12
+
+yi
+
+log
+
+y^i
+
+and
+
+LM M D
+
+=
+
+1 Ns
+
+(xis)
+
+-
+
+1 Nt
+
+(xtj) , with Ns and Nt being
+
+the number of source and target domain samples, respectively.
+
+Curriculum learning progressively increases augmentation
+
+probability from 10% to 50% over training epochs, allowing
+
+the model to first learn basic patterns before confronting harder
+
+augmented samples:
+
+p(atu)g = min
+
+t 0.5, 0.1 + 0.4
+T
+
+(3)
+
+where t is the current epoch and T is the total epochs.
+
+C. Model Conversion and Deployment
+To enable the deployment of our model on small embedded devices, we use the RKNN Toolkit to convert the trained PyTorch model to an RKNN model. The trained PyTorch model is first exported to the ONNX format. Then, the ONNX model is converted to the RKNN format using the RKNN Toolkit's API. During this conversion process, quantization and pruning can be applied to reduce the model size and
+
+improve inference speed. We implement 30% global structured channel pruning based on L1-norm ranking, subsequently applying symmetric KL-divergence quantization for optimal weight distribution preservation.
+The KL-Divergence quantization minimizes distributional discrepancy between original and quantized weights. For weight tensor W  R ,Cout×Cin×K the optimal quantization range is determined by:
+
+qm in, qm ax = arg min DKL P (W)Q(W)
+qmin ,qmax
+
+(4)
+
+where P (W) represents the original weight distribution,
+
+and Q(W) denotes the quantized distribution after transfor-
+
+mation:
+
+wij = sc ·
+
+wij sc
+
++ zc
+
+(5)
+
+with
+
+channel-specific
+
+scale
+
+sc
+
+=
+
+qmc ax-qmc in 28 -1
+
+and
+
+zero-point
+
+zc = -
+
+qmc in sc
+
+. Next, the converted RKNN model is tested
+
+on the PC using the RKNN Toolkit's testing tools to ensure
+
+its accuracy and performance meet the required standards.
+
+Finally, the RKNN model and its associated configuration files
+
+are deployed to the target embedded device. The model is
+
+integrated into the device's software using the C API provided
+
+by the RKNN Toolkit.
+
+By following this methodology, we ensure that the model
+
+can be efficiently deployed on resource-constrained embed-
+
+ded devices, enabling the development of portable and cost-
+
+effective brain-computer interface applications.
+
+III. EXPERIMENTS AND RESULTS
+A. Dataset and Preprocessing
+This study uses the BCI Competition IV Dataset 2a[18], which consists of EEG data from nine subjects performing MI tasks in two separate sessions (T and E). The raw data is stored in GDF format and is processed using the Biosig toolbox[19] in MATLAB.
+During the data reading process, samples are constructed by extracting 1000 sample segments of EEG data from each trial,
+
+resulting in a data block of size 1000 × 22 . Any NaN values in the data are replaced with zeros to ensure consistency. To remove noise and retain relevant signal components, a bandpass filter is applied. The filter is a 6th-order Chebyshev Type II filter with a passband of 4 Hz to 40 Hz and a stopband attenuation of 60 dB. Additionally, each channel's data is standardized by subtracting the mean and dividing by the standard deviation, reducing variability and improving model training performance.
+B. Comparison with State-of-the-Art Methods
+To comprehensively evaluate EdgeMIFormer's capabilities, we benchmark it against two representative baseline methods: EEGNet, a lightweight CNN specifically designed for EEG signal processing, and EEGConformer, a Transformer variant employing global attention. The comparison metrics include classification accuracy, model size (KB), and floating-point operations (FLOPs), as summarized in Table I.
+Experimental results show that EdgeMIFormer achieves 83.76% accuracy, nearly matching EEGConformer's 83.96% while significantly outperforming EEGNet's 72.36%. This confirms the superior capability of Transformer-based architectures in capturing complex spatiotemporal patterns in EEG signals. In terms of computational efficiency, EdgeMIFormer requires 1368.35KB model size, approximately 12.6% less than EEGConformer's 1565.62KB, and performs 228M FLOPs, about 12.6% fewer than EEGConformer's 261M. While these figures remain substantially higher than EEGNet (77.73KB model size, 103M FLOPs), the significant accuracy improvement (over 11 percentage points) demonstrates EdgeMIFormer's favorable performance-efficiency trade-off. These comparison results validate that our proposed local attention strategy effectively reduces computational overhead while maintaining high classification performance, offering a viable path for high-performance BCI implementation in resource-constrained environments.
+TABLE I PERFORMANCE COMPARISON OF EDGEMIFORMER AGAINST
+STATE-OF-THE-ART METHODS
+
+Model
+EEGNet EEGConformer EdgeMIFormer (Ours)
+
+Accuracy (%)
+72.36 83.96 83.76
+
+Model Size (KB)
+77.73 1,565.62 1,368.35
+
+FLOPs (M)
+103 261 228
+
+Fig. 2. Spatiotemporal feature embedding module architecture.
+
+C. Impact of Local Attention Window Size
+The local attention mechanism represents a core innovation in our model design, with window size as its critical parameter determining the temporal receptive field at each time point. To systematically evaluate the influence of this parameter on classification performance, we conducted extensive experiments with window sizes ranging from 1 to 25 under different embedding module configurations. Figure 3 presents the results from two experimental settings: with embedding
+
+module output dimension of 61 (Figure 3a) and 31 (Figure 3b), showing mean accuracy and standard deviation.
+The results reveal a pronounced non-linear relationship between window size and classification accuracy across both configurations. In both settings, accuracy increases rapidly as the window size grows from 1 to a relatively small range (approximately 5-9). Specifically, for the 61-dimension output configuration, accuracy rises substantially from 79.04% with window size 1 to 83.77% with window size 9, representing a 4.73 percentage point improvement. Similarly, for the 31-dimension output configuration, accuracy improves from 80.38% with window size 1 to 83.82% with window size 13, yielding a 3.44 percentage point gain. This significant enhancement demonstrates that even limited temporal context substantially improves the model's ability to recognize MI patterns in EEG signals.
+Notably, the two configurations reach peak accuracy at different window sizes: the 61-dimension output achieves maximum accuracy of 83.81% at window size 15, while the 31-dimension output reaches its peak of 83.82% at window size 13. This divergence likely reflects differences in the optimal receptive field required to capture spatiotemporal features in EEG signals at different temporal resolutions. Further observation reveals that as window size continues to increase, accuracy in both configurations first stabilizes and then slightly decreases, suggesting that excessively large receptive fields may incorporate irrelevant information without providing additional discriminative power or even introducing interference. Analysis of the error bars (standard deviations) indicates relatively low variability in model performance across most window sizes (standard deviations typically below 0.5%), demonstrating training stability and result reliability. However, certain specific window sizes (such as window size 25 in the 61-dimension configuration and window size 17 in the 31-dimension configuration) exhibit relatively larger standard deviations, potentially indicating increased sensitivity to initialization and optimization processes at these configurations.
+D. Quantization and Edge Deployment
+A primary objective of this research is to enable realtime BCIs on edge devices, making model deployment and inference efficiency critical considerations. We selected the RK NPU as our target hardware platform and systematically evaluated performance before and after applying various optimization strategies. Initially, we deployed the original PyTorch model on both a general-purpose CPU and the specialized NPU, measuring inference latency in each case. As shown in Table II, the platform transition alone reduced inference time dramatically from 683,360µs on CPU to 44,700µs on NPU while maintaining identical accuracy (83.76%). To further reduce resource consumption, we implemented both asymmetric quantization and KL-divergence-based symmetric quantization. The asymmetric approach compressed the model to 810.56KB with an inference latency of 31,729µs, though accuracy decreased slightly to 83.19%. The KL-divergence-
+
+based symmetric quantization performed notably better, further compressing the model to 655.36KB (47.9% of the original size) and optimizing inference latency to 31,314µs (approximately 31ms) while maintaining an accuracy of 83.42%--a minimal reduction of only 0.34 percentage points from the original model. This result has significant practical implications, as the 31ms inference latency falls well below the 50ms threshold typically required for real-time BCI applications, indicating that our system can provide instantaneous feedback. Collectively, these findings demonstrate that the optimized EdgeMIFormer achieves both high accuracy and low latency, establishing a solid foundation for the practical deployment of portable, real-time brain-computer interface systems.
+
+TABLE II EDGEMIFORMER PERFORMANCE ACROSS DEPLOYMENT ENVIRONMENTS
+
+Model Version
+Original (CPU) Original (NPU) Asymmetric Quantization KL Symmetric Quantization
+
+Accuracy (%)
+83.76 83.76 83.19 83.42
+
+Model Size (KB)
+1,368.35 1,368.35 810.56 655.36
+
+Inference Time (µs)
+683,360 44,700 31,729 31,314
+
+IV. DISCUSSION
+The proposed EdgeMIFormer represents a significant advancement in deploying high-performance Transformer models for MI EEG classification on resource-constrained edge devices. By integrating localized attention mechanisms with systematic model compression, the architecture achieves a classification accuracy of 83.42% on the BCI Competition IV 2a dataset, surpassing existing edge-deployable models by 15.28%. Notably, the optimized model attains real-time inference with a latency of 31 ms on the RK NPU, fulfilling the critical requirement for instantaneous feedback in practical BCI applications. This performance is achieved despite a 47.9% reduction in model size through quantization and pruning, demonstrating that computational efficiency need not compromise decoding accuracy. The success stems from the local attention mechanism, which strategically balances local temporal dynamics and global dependencies­outperforming traditional CNNs like EEGNet in capturing complex spatiotemporal patterns while avoiding the prohibitive computational costs of global Transformer architectures like EEGConformer.
+The implications of this work extend beyond MI classification. The methodology establishes a viable pathway for deploying attention-based models in portable medical devices, such as rehabilitation exoskeletons or prosthetic control systems, where low latency and minimal resource consumption are paramount. By validating the effectiveness of quantization for Transformers, the RK NPU implementation serves as a foundational blueprint for future embedded neurointerface systems, particularly in decentralized healthcare scenarios requiring offline operation. However, the current framework exhibits limitations in generalizability, as evaluations are restricted
+
+D7KH2XWSXW'LPHQVLRQ 
+
+E7KH2XWSXW'LPHQVLRQ 
+
+
+
+%HVW
+
+
+
+%HVW
+
+&ODVVLILFDWLRQ$FFXUDF\
+
+ 
+
+ 
+
+ 
+
+ *OREDO$WWHQWLRQ  *OREDO$WWHQWLRQ
+
+5DSLG*URZWK5HJLRQ
+
+5DSLG*URZWK5HJLRQ
+
+
+
+$FFXUDF\
+
+
+
+$FFXUDF\
+
+         :LQGRZ6L]H
+
+         :LQGRZ6L]H
+
+1RWH(UURUEDUVUHSUHVHQWVWDQGDUGGHYLDWLRQDFURVVWKUHHLQGHSHQGHQWH[SHULPHQWV
+
+Fig. 3. Impact of local attention window size on classification accuracy. (a) Embedding module output dimension of 61; (b) Embedding module output dimension of 31. Error bars indicate standard deviation across three independent experiments.
+
+to a single dataset and static laboratory conditions. Realworld applicability demands further validation across diverse datasets and subjects, as well as robustness testing against environmental noise and neural signal variability.
+Notably, the local attention mechanism enhances the temporal orderliness of energy matrix elements in multi-layer attention by reducing multiplicative operations between distant EEG signal segments. Simultaneously, the iterative nature of multi-head attention progressively expands the model's receptive field during computation, thereby preserving its capacity for global/long-range pattern recognition. This mechanism­ constrained local interactions coupled with hierarchically aggregated context­likely explains how EdgeMIFormer maintains high accuracy despite significant computational reductions. Future studies could experimentally dissect these dynamics through attention weight visualization and ablation tests, which would not only validate this hypothesis but also advance the interpretability of Transformer architectures in neurophysiological signal processing.
+V. CONCLUSION
+This work presents EdgeMIFormer, a novel Transformerbased architecture for edge-deployed MI EEG classification. By implementing local attention fusion instead of conventional global self-attention, our approach significantly reduces computational complexity while maintaining high accuracy. The optimized model achieves 83.42% classification accuracy on the BCI Competition IV Dataset 2a, with real-time inference latency of 31 ms and a compressed size of 655.36KB (47.9% of the original model) on the RK NPU. It is demonstrated that our approach successfully bridges the gap between highperformance EEG decoding and practical edge deployment. In the future, we should focus on cross-dataset validation, personalization mechanisms for individual users, and enhanced robustness against environmental noise and signal. Expanding
+
+the application scope to other BCI paradigms and multimodal integration would further advance the development of accessible and portable neural interfaces for real-world applications.
+VI. ACKNOWLEDGEMENTS
+This work was supported by the STI 2030-Major Projects (2022ZD0208903), the National Natural Science Foundation of China (U24A20339, and 62036013), and the Science and Technology Innovation Program of Hunan Province (2023RC1004, and 2024QK2006). Ling-Li Zeng is the corresponding author.
+REFERENCES
+[1] R. T.-L. Ho, W. Xue, M. K.-W. See, D. Y.-C. Chan, A. C.-O. Tsang, C. H.-K. Mak et al., "Advances in clinical brain­computer interfaces for assistive substitution and rehabilitation: A rapid scoping review," Surgical Practice, vol. 29, no. 1, pp. 35­49, 2025.
+[2] P. Arpaia, A. Esposito, A. Natalizio, and M. Parvis, "How to successfully classify eeg in motor imagery bci: a metrological analysis of the state of the art," Journal of Neural Engineering, vol. 19, no. 3, p. 031002, 2022.
+[3] S. Mishra, O. Mahmudi, and A. Jalali, "Motor imagery signal classification using adversarial learning: A systematic literature review," IEEE Access, vol. 12, pp. 91 053­ 91 074, 2024.
+[4] P. Wierzgala, D. Zapala, G. M. Wojcik, and J. Masiak, "Most popular signal processing methods in motorimagery bci: a review and meta-analysis," Frontiers in neuroinformatics, vol. 12, p. 78, 2018.
+[5] X. Wang, M. Hersche, M. Magno, and L. Benini, "Mibminet: An efficient convolutional neural network for motor imagery brain­machine interfaces with eeg channel selection," IEEE Sensors Journal, vol. 24, no. 6, pp. 8835­8847, 2024.
+
+[6] Y. Wang, C. Jiang, and C. Li, "A review of braincomputer interface technologies: Signal acquisition methods and interaction paradigms," arXiv preprint arXiv:2503.16471, 2025.
+[7] J. Choi, K. T. Kim, J. H. Jeong, L. Kim, S. J. Lee, and H. Kim, "Developing a motor imagery-based realtime asynchronous hybrid bci controller for a lower-limb exoskeleton," Sensors, vol. 20, no. 24, p. 7309, 2020.
+[8] V. J. Lawhern, A. J. Solon, N. R. Waytowich, S. M. Gordon, C. P. Hung, and B. J. Lance, "EEGNet: a compact convolutional neural network for eeg-based brain­ computer interfaces," Journal of neural engineering, vol. 15, no. 5, p. 056013, 2018.
+[9] Y. Song, X. Jia, L. Yang, and L. Xie, "Transformer-based spatial-temporal feature learning for eeg decoding," arXiv preprint arXiv:2106.11170, 2021.
+[10] M. Abbasi and P. Saeedi, "Enhancing multivariate time series classifiers through self-attention and relative positioning infusion," IEEE Access, vol. 12, pp. 67 273­ 67 290, 2024.
+[11] H. Zhou, S. Zhang, J. Peng, S. Zhang, J. Li, H. Xiong et al., "Informer: Beyond efficient transformer for long sequence time-series forecasting," 35th AAAI Conference on Artificial Intelligence, Vancouver, British Columbia, Canada, 2021, pp. 11 106­11 115, 2021.
+[12] B. Abibullaev, A. Keutayeva, and A. Zollanvari, "Deep learning in eeg-based bcis: A comprehensive review of transformer models, advantages, challenges, and applications," IEEE Access, vol. 11, pp. 127 271­127 301, 2023.
+[13] S. Ye, J. Du, L. Zeng, W. Ou, X. Chu, Y. Lu et al., "Galaxy: A resource-efficient collaborative edge ai system for in-situ transformer inference," IEEE INFOCOM 2024 - IEEE Conference on Computer Communications, Vancouver, Canada, 2024, pp. 1001­1010, 2024.
+[14] A. Keutayeva, N. Fakhrutdinov, and B. Abibullaev, "Compact convolutional transformer for subjectindependent motor imagery eeg-based bcis," Scientific Reports, vol. 14, no. 1, p. 25775, 2024.
+[15] X. Li, Q. Shen, H. Wang, and Z. Wang, "Eca-atcnet: Efficient eeg decoding with spike integrated transformer conversion for bci applications," Applied Sciences, vol. 15, no. 4, p. 1894, 2025.
+[16] I. Loshchilov and F. Hutter, "Decoupled weight decay regularization," arXiv preprint arXiv:1711.05101, 2017.
+[17] I. Loshchilov and F. Hutter, "Sgdr: Stochastic gradient descent with warm restarts," arXiv preprint arXiv:1608.03983, 2016.
+[18] M. Tangermann, K.-R. Mu¨ller, A. Aertsen, N. Birbaumer, C. Braun, C. Brunner et al., "Review of the bci competition iv," Front Neurosci, vol. 6, p. 55, 2012.
+[19] A. Schlo¨gl and C. Brunner, "Biosig: a free and open source software library for bci research," Computer, vol. 41, no. 10, pp. 44­50, 2008.
+
+

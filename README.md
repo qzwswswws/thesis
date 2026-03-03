@@ -1,20 +1,39 @@
-# 硕士学位论文目录结构 (Master's Thesis Directory Structure)
+# 基于 AI 协同的硕士学位论文撰写项目
 
-为了高效完成硕士学位论文，本项目采用了以下目录结构：
+这是一个利用 Antigravity (AI) 与用户深度协同完成的硕士论文项目。本项目通过结构化的目录管理和标准化的 AI 交互协议，实现从原始实验数据到高质量 LaTeX 文稿的高效转化。
 
-## 目录说明
+## 目录结构概览
 
-- **01_Proposal_Midterm** (开题与中期报告): 存放开题报告、中期检查相关的文档、PPT及附件。
-- **02_Literature** (文献管理与综述): 存放收集的参考文献 PDF、文献调研笔记及综述初稿。
-- **03_Methodology_Scripts** (算法实现与实验脚本): 存放研究过程中编写的核心算法代码、数据预处理脚本、绘图代码等。
-- **04_Data** (实验原始数据与处理结果): 存放实验原始数据集、中间结果及最终导出的数据报表。
-- **05_Manuscript** (论文主文档 LaTeX 源码): 存放论文正文的 LaTeX 源码及整体大纲 (目 录.docx)。
-- **06_Appendix** (附录资料): 存放各种附录、获奖证明、支撑材料等。
-- **07_Defense_Slides** (最终答辩 PPT): 存放最终学位论文答辩的幻灯片。
-- **assets** (资源文件): 存放论文中使用的共享图片 (figures)、图标及参考文献引用文件 (.bib)。
+```bash
+thesis/
+├── 00_AI_Management/       # AI 协作中枢（协议、提示词、进度看板）
+├── 01_Thesis_LaTeX/        # 核心活跃区（LaTeX 源码、生成的 PDF）
+├── 02_Source_Material/     # 原始素材（开题报告、算法脚本、实验数据）
+├── 03_Literature/          # 参考资料库
+├── 04_Appendix/            # 附录内容
+├── 05_Defense_Slides/      # 答辩幻灯片
+└── 99_Archive/             # 历史归档区（AI 默认忽略，保持工作区清爽）
+```
 
-## 使用建议
+## 核心协作流程
 
-1.  **版本控制**: 建议配合 Git 使用，并在 `.gitignore` 中忽略 `04_Data` 中的大型原始数据文件。
-2.  **LaTeX 编辑**: 建议在 `05_Manuscript` 中编写正文，并在 `assets` 中管理图片和引用。
-3.  **增量更新**: 随着研究进度的推进，将新的实验结果和文献及时归档到对应文件夹。
+### 1. 文献调研 (Research)
+*   **原则**: 严禁 AI 幻想文献。
+*   **流程**: AI 发现知识缺口 -> 提示用户使用 **Undermind** 调研 -> 用户将结果存入 `00_AI_Management/Input_Buffer` -> AI 提取并撰写文献综述。
+
+### 2. 撰写与起草 (Drafting)
+*   **输入**: 基于 `02_Source_Material` 中的原始逻辑。
+*   **输出**: 初稿生成于 `00_AI_Management/Output_Drafts` 或直接更新 `01_Thesis_LaTeX/data/`。
+
+### 3. 科研绘图 (Plotting)
+*   **TikZ 优先**: 对于神经网络架构和逻辑流程图，优先使用 TikZ 渲染。
+*   **外部生成**: 复杂示意图由用户利用外部 AI 生成后，再由本项目 AI 进行 LaTeX 适配。
+
+## 快速开始
+
+1.  **唤醒 AI**: “阅读 `00_AI_Management/Prompt_Library/Master_Prompt.md` 并汇报当前进度”。
+2.  **获取支持**: 将外部信息（如网页摘要、Undermind 结果）放入 `00_AI_Management/Input_Buffer` 后，告知 AI “处理输入缓存”。
+3.  **检查质量**: 每次大幅修改后运行 `01_Thesis_LaTeX/makepdf.bat`。
+
+---
+*注：本项目不仅是论文的仓库，更是人机协同撰写的方法论实践。*
