@@ -1,0 +1,333 @@
+                                                                                   Undermind
+
+   Efficient Transformers for EEG real time inference report
+
+                                                       March 15, 2026
+
+Contents
+
+   Efficient Transformers for real time EEG inference . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2
+   How efficient attention reduces quadratic cost . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2
+   What the EEG MI literature actually uses . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3
+   Compact backbones matter as much as attention type . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4
+   What counts as real time evidence . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4
+   Main conclusions for a focused review . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 5
+   Best paper set for the main narrative . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 5
+   References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 7
+
+                                                                                     1/8
+Undermind                Efficient Transformers for EEG real time inference report  March 15, 2026
+
+Efficient Transformers for real time EEG inference
+
+Transformer models are attractive for EEG because they can model long temporal dependencies without
+hand built features, but vanilla self attention is a poor fit for edge BCI settings. For a sequence of length  ,
+full self attention forms an  ×  attention map, so both compute and memory scale as ( 2). In EEG
+motor imagery, where multi channel signals are sampled densely over windows of several seconds, this
+cost quickly becomes the main barrier to low latency inference. The literature in this project converges
+on a simple response: constrain attention to local neighborhoods, build hierarchy across windows, or
+replace pairwise attention with sparse or projected variants so the effective cost grows only linearly or
+near linearly with sequence length [Bel20, Wan20, Wu21, Liu21b].
+
+In the EEG literature, the strongest evidence does not yet come from one single linear attention family.
+Instead, it comes from three partially overlapping design lines. The first is windowed and hierarchical
+attention for MI decoding, where temporal neighborhoods are processed in fixed or shifted windows and
+then fused across scales [Mou24, Wan23, Hua23b, Den23]. The second is compact hybrid backbones,
+where convolution reduces token count and injects local inductive bias before a small Transformer block
+models longer range structure [Son22, Keu24, Asa25]. The third is hardware minded deployment work,
+where models are explicitly sized for MCUs or ASIC style execution and evaluated by latency, energy, or
+memory footprint rather than accuracy alone [Bus22, Bus24, Yao22, Asa25, Jun24].
+
+How efficient attention reduces quadratic cost
+
+The core mechanisms in the literature can be grouped as follows.
+
+Mechanism                Complexity intuition              Representative papers    Main value for EEG
+Local window attention                                     [Bel20, Liu21b, Mou24,
+                         Each token attends only to        Hua23b]                  Matches the local temporal
+Shifted or hierarchical  a fixed neighborhood of                                    structure of oscillatory
+windows                  width , so cost becomes           [Liu21b, Wan23, Den23,   EEG and keeps memory
+                         ( ), which is                     Qam26]                   bounded
+Sparse attention         effectively linear when  is
+                         fixed                             [Bel20, Mia25]           Preserves local efficiency
+Low rank or projected                                                               while recovering broader
+attention                Attention is local within         [Wan20]                  temporal context
+                         windows, then cross
+                         window exchange happens                                    Keeps long range
+                         through window shifting                                    interactions without fully
+                         or higher level aggregation                                dense attention
+
+                         Each token attends only to                                 Attractive in principle for
+                         a selected subset such as                                  long sequences, though
+                         Top K or patterned                                         less common in EEG MI
+                         neighbors                                                  papers here
+
+                         Keys and values are
+                         projected to a smaller
+                         dimension before
+                         attention, making cost
+                         scale linearly in 
+
+                                                      2/8
+Undermind               Efficient Transformers for EEG real time inference report  March 15, 2026
+
+Mechanism               Complexity intuition              Representative papers    Main value for EEG
+Additive or query                                         [Wu21, Yeo24]
+simplified attention    Global context is                                          Promising for lightweight
+                        summarized without                [Son22, Keu24, Jun24]    encoders, but still only
+Token reduction before  constructing all token pair                                lightly adopted in EEG BCI
+attention               interactions
+                                                                                   Often the most practical
+                        Convolution, patching, or                                  route in EEG, where the
+                        chunking reduces                                           token budget can be cut
+                        sequence length before the                                 early
+                        Transformer stage
+
+Two algorithmic references are especially useful for the report. Longformer replaces dense attention with
+local windows plus task specific global tokens, providing a clean example of how linear scaling can be
+achieved while keeping a path for long range information flow [Bel20]. Swin Transformer shows how non
+overlapping local windows can be made more expressive by shifting the window partition across layers,
+yielding hierarchical multi scale processing with linear complexity in image size [Liu21b]. EEG papers do
+not copy these designs literally, but several MI models clearly inherit the same logic of local windows,
+hierarchy, and cross window fusion [Wan23, Mou24, Qam26].
+
+What the EEG MI literature actually uses
+
+The most on target MI studies in this project rely on local temporal windows rather than truly global linear
+attention. Hierarchical Window Attention for Motor Imagery EEG Classification builds token sequences
+from temporal spatial embeddings, applies local window attention inside non overlapping temporal
+windows, and stacks these windows hierarchically across scales. The paper argues that discriminative MI
+information often resides in local temporal neighborhoods and reports strong performance on BCI III 3a
+and BCI IV 2a [Mou24]. This is one of the clearest examples of a local attention design whose efficiency
+story is aligned with EEG physiology.
+
+The Swin inspired MI line reaches a similar conclusion by another route. The channel attention plus Swin
+Transformer model uses channel weighting together with Swin style local windows to capture temporal
+spectral spatial structure in MI data [Wan23]. Newer follow on work in the library extends this direction
+toward subject independent decoding with compact convolutional Swin backbones and reduced FLOPs
+[Qam26]. These papers are methodologically valuable because they make the bridge from computer vision
+window attention to EEG especially explicit.
+
+Sliding window models are the other strong branch. CSANet combines spatiotemporal convolution,
+sliding windows, and local plus global attention stages, with gains on both within subject and between
+subject MI tasks [Hua23b]. MCL SWT pushes the same idea toward subject independent recognition, using
+a temporal sliding window Transformer together with mirror contrastive learning to sharpen lateralized
+motor patterns [Luo24]. These models support a practical conclusion: in MI EEG, local windows are not
+just a computational trick. They also act as a useful inductive bias for event related desynchronization
+patterns that unfold over short sensorimotor intervals.
+
+Hierarchical aggregation appears even when papers do not explicitly use Swin style windows. The
+Hierarchical Transformer for MI BCI splits long trials into shorter intervals, uses a low level Transformer
+within intervals, and then applies a high level Transformer across interval level features [Den23]. This
+
+                                                     3/8
+Undermind  Efficient Transformers for EEG real time inference report  March 15, 2026
+
+does not fully eliminate quadratic attention inside each block, but it reduces the cost of modeling long
+trials by moving attention to a multi stage structure. It is therefore best understood as a near neighbor to
+windowed attention rather than a separate family.
+
+Compact backbones matter as much as attention type
+
+A striking pattern in the library is that many of the most useful EEG models achieve efficiency less by
+inventing a brand new linear attention rule and more by shrinking the token budget before attention. EEG
+Conformer is the central example. It uses convolution to learn low level temporal and spatial features,
+then passes these compact features to a Transformer block that captures wider correlations [Son22]. The
+design is not linear in the strict theoretical sense, but it is compact, widely adopted, and strong enough
+to become the baseline that later efficient models try to match or beat.
+
+Compact convolutional transformer variants continue this trend. EEGCCT improves subject independent
+MI decoding while using fewer parameters than several competing Transformer baselines [Keu24].
+TinyEEGConformer takes the next step toward deployment, reporting 21 times fewer parameters than
+EEG Conformer on BCI IV 2a while slightly improving accuracy and fitting within a small embedded
+memory budget on Arm Cortex M processors [Asa25]. The lesson is that for current BCI practice, compact
+front ends, shallow attention blocks, and careful parameter budgeting are often more decisive than a pure
+change from dense to linear attention.
+
+What counts as real time evidence
+
+The MI literature is rich in efficiency intent but still thin in hard latency reporting. Many papers claim
+suitability for real time BCI because they use local windows, fewer parameters, or lower FLOPs [Mou24,
+Wan23, Keu24, Qam26]. Far fewer papers actually measure latency on target hardware. The clearest edge
+deployment evidence in the project comes from adjacent EEG tasks rather than MI itself.
+
+Paper      Task                            Efficiency strategy        Deployment evidence
+[Bus22]    Seizure detection               Compact Transformer on 4
+                                           temporal channels          Real time execution on
+[Bus24]    Seizure detection                                          Apollo4 MCU, 405 ms and
+                                           Hardware oriented          1.79 mJ per inference
+[Yao22]    Sleep staging                   compact EEGformer
+[Asa25]    MI decoding                                                GAP9 deployment at 13.7
+                                           Lightweight CNN            ms and 0.31 mJ per
+[ Jun24]   Generic Tiny Transformers       Transformer                inference
+                                           Tiny Conformer with
+                                           37,135 parameters          Reduced model tested on
+                                                                      Arduino Nano 33 BLE
+                                           Kernel and memory
+                                           schedule optimization      Evaluated on Arm Cortex
+                                                                      M processors for on board
+                                                                      use
+
+                                                                      Up to 4.79 times lower
+                                                                      latency and up to 6.19
+                                                                      times lower memory peak
+                                                                      on commercial MCUs
+
+                                      4/8
+Undermind  Efficient Transformers for EEG real time inference report              March 15, 2026
+
+This evidence base supports a cautious but favorable conclusion. Efficient Transformer style EEG
+inference on edge hardware is already feasible, but the strongest proof comes from seizure and sleep
+applications where deployment papers report latency and energy directly [Bus22, Bus24, Yao22]. MI BCI
+papers are closer to proving architectural plausibility than end to end real time readiness. TinyEEGCon
+former is one of the few MI centered papers that begins to close this gap [Asa25].
+
+Main conclusions for a focused review
+
+   · Most relevant mechanism for the report
+
+     Local window attention and hierarchical window aggregation are the best supported design pattern
+     for EEG MI in this library [Mou24, Wan23, Hua23b, Den23]. They align computational efficiency with
+     the short time scale structure of MI EEG.
+
+   · Best foundational references
+
+     Longformer and Swin Transformer are the strongest algorithmic anchors for explaining how con
+     strained attention reduces ( 2) cost to linear or near linear scaling under fixed local windows
+     [Bel20, Liu21b]. Linformer and Fastformer are useful secondary references for low rank and additive
+     routes to linear attention [Wan20, Wu21].
+
+   · Best EEG MI backbone references
+
+     EEG Conformer remains the key baseline because it established a compact convolution plus attention
+     recipe that much of the later work refines [Son22]. EEGCCT and TinyEEGConformer show how that
+     recipe can be pushed toward smaller models and subject independent or embedded settings [Keu24,
+     Asa25].
+
+   · Best real time deployment references
+
+     EEGformer on MCU platforms provides the strongest measured evidence for low latency and low
+     energy Transformer style EEG inference [Bus22, Bus24]. These papers are outside MI, but they are
+     highly relevant to any argument about deployment realism.
+
+   · Current limitation of the field
+
+     The literature still over indexes on offline accuracy. Surveys in the project consistently note limited
+     standardization, data scarcity, and sparse reporting of latency, energy, and acquisition to feedback
+     delay [Abi23, Keu24b, Pfe25]. This means claims about real time BCI readiness should be framed
+     carefully.
+
+Best paper set for the main narrative
+
+A concise review can be built around nine papers.
+
+Role in report                               Papers
+Foundational efficient attention             [Bel20], [Liu21b]
+MI windowed and hierarchical attention       [Mou24], [Wan23], [Hua23b], [Den23]
+Compact EEG Transformer backbones            [Son22], [Keu24], [Asa25]
+
+                                        5/8
+Undermind                 Efficient Transformers for EEG real time inference report  March 15, 2026
+
+Role in report                 Papers
+Real deployment evidence       [Bus24], [Bus22], [Yao22], [Jun24]
+
+Taken together, these papers support a clear synthesis. For EEG and especially MI BCI, the path from
+quadratic attention to practical real time inference is currently driven less by pure linear attention theory
+and more by local windows, hierarchy, early token reduction, and hardware aware implementation. The
+field is moving toward deployable efficient Transformers, but direct proof on edge MI systems remains
+limited and should be treated as an active research frontier rather than a solved problem [Asa25, Bus24,
+Pfe25].
+
+                          6/8
+Undermind  Efficient Transformers for EEG real time inference report  March 15, 2026
+
+References
+
+[Bel20] I. Beltagy, M. E. Peters, and A. Cohan, "Longformer: The Long-Document Transformer," ArXiv,
+vol. abs/2004.05150, Apr. 2020.
+
+[Wan20] S. Wang, B. Z. Li, M. Khabsa, H. Fang, and H. Ma, "Linformer: Self-Attention with Linear
+Complexity," ArXiv, vol. abs/2006.04768, Jun. 2020.
+
+[Wu21] C. Wu, F. Wu, T. Qi, and Y. Huang, "Fastformer: Additive Attention Can Be All You Need," ArXiv,
+vol. abs/2108.09084, 2021.
+
+[Liu21b] Z. Liu et al., "Swin Transformer: Hierarchical Vision Transformer using Shifted Windows,"
+2021 IEEE/CVF International Conference on Computer Vision (ICCV), pp. 9992­10002, 2021, doi: 10.1109/
+ICCV48922.2021.00986.
+
+[Mou24] H. Mou, W. Yang, S. Zhang, Z. Pei, Z. Li, and X. Wu, "Hierarchical Window Attention for Motor
+Imagery EEG Classification," 2024 IEEE International Symposium on Biomedical Imaging (ISBI), pp. 1­5,
+May 2024, doi: 10.1109/ISBI56570.2024.10635122.
+
+[Wan23] H. Wang et al., "A Novel Algorithmic Structure of EEG Channel Attention Combined With Swin
+Transformer for Motor Patterns Classification," IEEE Transactions on Neural Systems and Rehabilitation
+Engineering, vol. 31, pp. 3132­3141, Jul. 2023, doi: 10.1109/TNSRE.2023.3297654.
+
+[Hua23b] Y. Huang et al., "An improved model using convolutional sliding window-attention network
+for motor imagery EEG classification," Frontiers in Neuroscience, vol. 17, Aug. 2023, doi: 10.3389/
+fnins.2023.1204385.
+
+[Den23] P. Deny, S. Cheon, H. Son, and K. Choi, "Hierarchical Transformer for Motor Imagery-Based
+Brain Computer Interface," IEEE Journal of Biomedical and Health Informatics, vol. 27, pp. 5459­5470, Aug.
+2023, doi: 10.1109/JBHI.2023.3304646.
+
+[Son22] Y. Song, Q. Zheng, B. Liu, and X. Gao, "EEG Conformer: Convolutional Transformer for EEG
+Decoding and Visualization," IEEE Transactions on Neural Systems and Rehabilitation Engineering, vol. 31,
+pp. 710­719, Dec. 2022, doi: 10.1109/TNSRE.2022.3230250.
+
+[Keu24] A. Keutayeva, N. Fakhrutdinov, and B. Abibullaev, "Compact convolutional transformer for
+subject-independent motor imagery EEG-based BCIs," Scientific Reports, vol. 14, Oct. 2024, doi: 10.1038/
+s41598-024-73755-4.
+
+[Asa25] N. O. Asante, L. Mei, X. Wang, and M. Magno, "TinyEEGConformer: An Attention-Based EEG
+Decoding Model for Embedded Systems," 2025 IEEE Sensors Applications Symposium (SAS), pp. 1­6, Jul.
+2025, doi: 10.1109/SAS65169.2025.11105112.
+
+[Bus22] P. Busia et al., "EEGformer: Transformer-Based Epilepsy Detection on Raw EEG Traces for Low-
+Channel-Count Wearable Continuous Monitoring Devices," 2022 IEEE Biomedical Circuits and Systems
+Conference (BioCAS), pp. 640­644, Oct. 2022, doi: 10.1109/BioCAS54905.2022.9948637.
+
+[Bus24] P. Busia et al., "Reducing False Alarms in Wearable Seizure Detection With EEGformer: A
+Compact Transformer Model for MCUs," IEEE Transactions on Biomedical Circuits and Systems, vol. 18, pp.
+608­621, Jan. 2024, doi: 10.1109/TBCAS.2024.3357509.
+
+           7/8
+Undermind  Efficient Transformers for EEG real time inference report  March 15, 2026
+
+[Yao22] Z. Yao and X. Liu, "A CNN-Transformer Deep Learning Model for Real-time Sleep Stage Classi
+fication in an Energy-Constrained Wireless Device*," 2023 11th International IEEE/EMBS Conference on
+Neural Engineering (NER), pp. 1­4, Nov. 2022, doi: 10.1109/NER52421.2023.10123825.
+
+[Jun24] V. J. Jung, A. Burrello, M. Scherer, F. Conti, and L. Benini, "Optimizing the Deployment of Tiny
+Transformers on Low-Power MCUs," IEEE Transactions on Computers, vol. 74, pp. 526­541, Apr. 2024, doi:
+10.1109/TC.2024.3500360.
+
+[Qam26] W. U. R. Qamar and B. Abibullaev, "Multi-scale EEG feature decoding with Swin Transform
+ers for subject independent motor imagery BCIs," Scientific Reports, vol. 16, Jan. 2026, doi: 10.1038/
+s41598-025-32207-3.
+
+[Mia25] T. Miao, L. Sha, K. Huang, Y. Li, and B. Liu, "SATrans-Net: Sparse Attention Transformer for EEG-
+based motor imagery decoding," Scientific Reports, vol. 16, Dec. 2025, doi: 10.1038/s41598-025-30806-8.
+
+[Yeo24] H. Yeom and K. An, "A Simplified Query-Only Attention for Encoder-Based Transformer Models,"
+Applied Sciences, Sep. 2024, doi: 10.3390/app14198646.
+
+[Luo24] J. Luo et al., "Mirror contrastive loss based sliding window transformer for subject-independent
+motor imagery based EEG signal recognition," ArXiv, vol. abs/2409.00130, Aug. 2024, doi: 10.48550/
+arXiv.2409.00130.
+
+[Abi23] B. Abibullaev, A. Keutayeva, and A. Zollanvari, "Deep Learning in EEG-Based BCIs: A Compre
+hensive Review of Transformer Models, Advantages, Challenges, and Applications," IEEE Access, vol. 11,
+pp. 127271­127301, 2023, doi: 10.1109/ACCESS.2023.3329678.
+
+[Keu24b] A. Keutayeva and B. Abibullaev, "Data Constraints and Performance Optimization for Trans
+former-Based Models in EEG-Based Brain-Computer Interfaces: A Survey," IEEE Access, vol. 12, pp.
+62628­62647, 2024, doi: 10.1109/ACCESS.2024.3394696.
+
+[Pfe25] M. A. Pfeffer, J. Wong, and S.-H. Ling, "Trends and Limitations in Transformer-Based BCI
+Research," Applied Sciences, Oct. 2025, doi: 10.3390/app152011150.
+
+           8/8
+

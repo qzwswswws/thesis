@@ -1,0 +1,29 @@
+## 2.3 高效自注意力机制与深度学习基础（起草参考）
+
+Transformer 架构的核心是通过自注意力机制（Self-Attention）捕捉序列中不同时间步和特征之间的长距离全局依赖关系。然而，在面对高频采样的长序列脑电数据时，标准自注意力所需的巨大算力成为阻碍其端侧部署的主要壁垒。
+
+### 2.3.1 标准自注意力机制与 $O(N^2)$ 复杂度瓶颈
+
+给定经过预处理和通道映射的输入连续脑电特征序列 $\mathbf{X} \in \mathbb{R}^{N \times d}$，其中 $N$ 为序列时间步长度，$d$ 为数据的特征维度。标准的自注意力机制首先通过三个不同的可学习参数矩阵 $\mathbf{W}_Q, \mathbf{W}_K, \mathbf{W}_V \in \mathbb{R}^{d \times d_k}$ 对输入 $\mathbf{X}$ 进行线性映射，分别得到查询矩阵（Query, $\mathbf{Q}$）、键矩阵（Key, $\mathbf{K}$）以及值矩阵（Value, $\mathbf{V}$），其计算过程如式 \eqref{eq:qkv} 所示：
+\begin{equation} \label{eq:qkv}
+\mathbf{Q} = \mathbf{X}\mathbf{W}_Q, \quad \mathbf{K} = \mathbf{X}\mathbf{W}_K, \quad \mathbf{V} = \mathbf{X}\mathbf{W}_V
+\end{equation}
+
+随后，算法通过计算 $\mathbf{Q}$ 和 $\mathbf{K}$ 之间的点积来衡量序列中不同位置的相关性，并在除以缩放因子 $\sqrt{d_k}$ 后经过 Softmax 激活函数得到注意力权重分数矩阵。最终的结果输出即是对 $\mathbf{V}$ 的加权求和，定义如式 \eqref{eq:attention} 所示：
+\begin{equation} \label{eq:attention}
+\text{Attention}(\mathbf{Q}, \mathbf{K}, \mathbf{V}) = \text{Softmax}\left(\frac{\mathbf{Q}\mathbf{K}^T}{\sqrt{d_k}}\right) \mathbf{V}
+\end{equation}
+
+从理论数学分析来看，计算上述核心相关性矩阵 $\mathbf{Q}\mathbf{K}^T$ 需要穷举输入脑电序列 $\mathbf{X}$ 两两时间步之间的相互作用。这一点积极算过程会产生一个物理尺寸为 $N \times N$ 的密集浮点矩阵。其单独所需的时间与空间计算复杂度为 $O(N^2 \cdot d)$。随着运动想象脑电采样率的提高和时间窗的延长，呈二次方爆炸性增长的显存开销使得完整的标准多头注意力（MSA）极难在具有严苛内存与算力限制的边缘设备上完成实时推理验证 \cite{Wan23}。
+
+### 2.3.2 局部非重叠与滑动窗口自注意力架构
+
+为打破全局计算带来的 $O(N^2)$ 复杂度瓶颈，近期的研究提出将自注意力计算限制在离散的“局部窗口（Local Windows）”范围内，而非让整个长序列的所有点互相“关注” \cite{Liu21b}。
+
+具体而言，算法将总长度为 $N$ 的脑电序列或特征图分割成了若干个互不重叠的小窗口，假设每个窗口内包含固定的 $M$ 个特征片段。如此一来，自主义注意力的密集矩阵乘法操作仅在每个包含 $M$ 个元素的局部子窗口内部独立执行。此时，整体架构所需计算相关性分数的复杂度被大幅缩减，由原本的二次方下降至式 \eqref{eq:complexity_local} 所示的线性级别体系：
+\begin{equation} \label{eq:complexity_local}
+\Omega(\text{W-MSA}) \approx 4Nd^2 + 2M^2Nd = O(N \cdot M \cdot d)
+\end{equation}
+由于在轻量化模型设置中，单个窗口的长度 $M$ 是预先设置的远小于 $N$ 的常数（即满足 $M \ll N$），因此总体计算复杂度完全实现了随输入脑电序列长 $N$ 呈严格梯度的线性化 $O(N)$ 增长 \cite{Hua23b}，极大地降低了板端推理的 MACs（乘加累计操作）次数。
+
+针对动态变化的脑电特征处理，单纯的非重叠隔离窗口虽然高效，但会截断不同时间窗口之间原本高度相关的时间节律连续性。因而相关网络进一步引入了滑动窗口注意力（Sliding Window Attention）机制 \cite{Hua23b, Bus24}。其数学映射表现为：在相邻两层注意力块之间，将局部分割窗口的网格向后位移固定的步幅单元（如平移 $\frac{M}{2}$）。通过滑动交织的操作，模型在保持线性低计算复杂度的前提下，成功构建了原本被物理隔绝的不同窗口间的跨窗口连接（Cross-window connections），从而达成了局部脑电特征到全局宏观意图的信息交互。正是这种兼具局部高效性与全局连通性的数学设计，构成了当前诸多面向低延迟脑机接口紧凑型网络的算子底座架构。
