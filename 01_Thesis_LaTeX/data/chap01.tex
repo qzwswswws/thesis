@@ -4,8 +4,22 @@
 \section{研究背景与意义}
 
 \section{脑电解码算法研究现状}
-\subsection{国外研究现状}
-\subsection{国内研究现状}
+\subsection{基于传统机器学习与CNN的解码方法}
+% 以后补充
+
+\subsection{基于 Transformer 的脑电解码方法现状}
+
+近年来，以 Transformer \cite{vaswani2017attention} 为代表的自注意力模型凭借其卓越的全局上下文依赖建模能力，在自然语言处理和计算机视觉领域取得了突破性进展，并逐渐被引入脑电信号（EEG）解码任务中。例如，Song 等人提出的 EEG-Conformer \cite{songEEG2022} 成功将浅层卷积的局部时空特征提取能力与自注意力的全局特征整合能力相结合，在运动想象（MI）分类中取得了显著效果。
+
+然而，传统 Transformer 及其变体（如 Vision Transformer, ViT）在处理 EEG 这种高频、非平稳的长序列时间序列数据时，面临着严峻的计算瓶颈。标准的全局多头自注意力（Multi-Head Self-Attention, MSA）机制的计算复杂度与输入序列长度呈二次方激增（即 $O(N^2)$）。这使得其在脑机接口（BCI）这种对计算资源高度受限、且要求极低延迟（通常要求端到端延迟 $<50$ms）的实时嵌入式系统中极难部署。
+
+为了打破这一计算瓶颈，研究者们开始将“局部注意力”与“高效 Transformer”架构引入脑电分析领域。局部窗口自注意力（Window-based Self-Attention）的理论基石可以追溯到相关的高效 NLP 和 CV 研究（例如 Longformer \cite{beltagy2020longformer} 与 Swin Transformer \cite{liu2021swin}）。其核心思想是将整个长序列或特征图划分为若干个互不重叠或带步长的局部窗口，并仅在窗口内部计算自我注意力得分，从而将序列建模带来的计算复杂度大幅降低。
+
+在运动想象（MI）脑电解码的具体应用中，多项最新研究已确证了局部注意力机制的有效性与硬件友好性。Wan 等人 \cite{wan2023channel} 创新性地将 Swin Transformer 的窗口注意力思想引入 EEG 通道注意力结构，验证了基于窗口的注意力在保留关键运动模式特征的同时，大幅降低了模型的显存和算力开销。Hua 等人 \cite{hua2023improved} 则提出了一种针对 MI EEG 分类的卷积滑动窗口注意力 network（Convolutional Sliding Window-Attention Network），进一步证明了相对于全局计算，局部滑动窗口能更精细地捕捉到脑电信号中具有区分度的局部时序成分（如特定的 ERD/ERS 节律变化），且不易陷入全局噪声的干扰。
+
+不仅局限于理论复杂度的降低，这类紧凑型 Transformer（Compact Transformer）正逐步迈向真实的端侧硬件部署。例如，Busia 等人 \cite{busia2024eegformer} 提出的 EEGformer 模型不仅在可穿戴癫痫检测中展示了高效的注意力机制，还少有地公布了其在微控制器（MCU）上的真实相关部署数据。此外，Keight 等人 \cite{keight2024compact} 专门为跨被试的 MI BCI 设计了紧凑型卷积 Transformer，使得模型足迹更小，进一步支撑了“高准确度与低部署成本（Compact Deployment）可以兼得”的论断。
+
+综上所述，当前基于 Transformer 的脑电解码技术正处于从“大而全的全局建模”向“小而精的局部/窗口高效架构”快速演进的阶段。这类高效架构不仅在理论上解决了复杂度灾难，还能通过更小的参数量适配如 ARM NPU 等边缘计算设备，这也正是本文后续设计的轻量化 EdgeMIFormer 所致力于突破的技术核心。
 
 \section{脑电采集与端侧部署技术研究现状}
 \subsection{国外研究现状}
