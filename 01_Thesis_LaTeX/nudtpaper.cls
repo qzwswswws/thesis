@@ -107,8 +107,8 @@
 \let\newcite=\cite
 \let\parencite=\newcite
 \let\inlinecite=\newcite
-\newcommand{\upcite}[1]{\textsuperscript{\newcite{#1}}} % 上标形式引用
-\renewcommand{\cite}[1]{\textsuperscript{\newcite{#1}}} % 上标形式引用
+\renewcommand{\cite}[1]{\textsuperscript{\newcite{#1}}} % 上标形式引用 (natbib自带方括号)
+\newcommand{\upcite}[1]{\textsuperscript{\newcite{#1}}} % 上标形式引用 (natbib自带方括号)
 \fi
 \RequirePackage[colorlinks=true,linkcolor=blue,citecolor=red,
 bookmarksnumbered=true,
