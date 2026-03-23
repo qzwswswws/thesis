@@ -18,4 +18,7 @@
 *   [x] 盲审视角收敛修订第 1.2 与第 2.2 节
 *   [x] 固化近期文本风格要求至 `Writing_Quality_Standards.md`
 *   [x] 固化 Undermind（知识簇1）人群与证据边界到 `Chap02_Research_Prompts.md`
+*   [x] 优化 `_AI_SYNC_BOARD.md`，加入受限跨 AI 协作机制
+*   [x] 新建 `_AI_RELAY_CHAT.md`，用于双 AI 对话式协作
+*   [x] 在 `_AI_RELAY_CHAT.md` 建立 T001：讨论既有文献材料去留与整理策略
 *   [ ] 执行项目健康检查与 Git 全量同步
