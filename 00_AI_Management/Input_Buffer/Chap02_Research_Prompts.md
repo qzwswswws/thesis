@@ -28,15 +28,33 @@
 
 ---
 
-## 知识簇 4：边缘端深度学习 optimization (Edge AI & Quantization)
-**重点**: 为第 3、4 章的量化和 NPU 部署提供理论依据。
+## 知识簇 4A：边缘端模型压缩与量化 (Edge AI Compression & Quantization)
+**重点**: 为第 3、4 章的量化、剪枝和精度-延迟-能耗权衡提供理论依据。
 
-> **Undermind Prompt**: 
-> "Investigate hardware-aware optimization techniques for deploying deep learning models on edge devices (e.g., ARM-based NPUs like RK3568). Focus on Post-Training Quantization (PTQ), weight pruning, and the trade-offs between model compression (8-bit quantization) and decoding accuracy in Brain-Computer Interface applications."
+> **Undermind Prompt**:
+> "Review hardware-aware optimization techniques for EEG or Brain-Computer Interface deep models, with emphasis on post-training quantization (PTQ), quantization-aware training (QAT), structured and unstructured pruning, mixed precision (INT8/INT16), and knowledge distillation. Prioritize studies that report explicit accuracy-latency-memory-energy trade-offs. For each paper, extract: task, dataset, hardware platform, baseline FP32 accuracy, optimized-model accuracy, latency, model size, energy or power if reported, and the deployment toolchain. Be strict about separating direct EEG/BCI evidence from only partially transferable time-series or biomedical-signal evidence. Prefer peer-reviewed papers from 2018-2026 and include canonical earlier papers only if still widely cited."
+
+---
+
+## 知识簇 4B：边缘硬件平台与 RK3568 部署证据 (Edge Deployment Platforms)
+**重点**: 为 RK3568 / RKNN / NPU 部署叙述提供更直接的工程依据。
+
+> **Undermind Prompt**:
+> "Investigate on-device deployment evidence for transformer-like or temporal deep models on edge hardware platforms relevant to this thesis, especially RK3568, RKNN, ARM-based NPUs, embedded Linux SBCs, and comparable low-power inference devices. Prioritize studies or technical reports with measured latency, memory footprint, throughput, power, or energy results. If direct EEG/BCI evidence is limited, include the closest transferable biomedical or high-frequency time-series deployments and explicitly assess transferability risk to motor-imagery EEG decoding. For each source, report: hardware, runtime/toolchain, numeric deployment results, model type, input characteristics, and why the evidence is or is not directly usable in a thesis chapter on edge deployment."
+
+---
+
+## 知识簇 1B（可选）：运动想象生理尾部补强 (MI Physiology Tail-End Support)
+**重点**: 补足当前 `2.1` 中仍偏 provisional 的反馈、训练、beta rebound 与大样本个体差异问题。
+
+> **Undermind Prompt**:
+> "Conduct a targeted follow-up review on unresolved motor imagery EEG physiology questions that remain after the core C3/C4/Cz and Mu/Beta literature review. Focus specifically on: (1) whether feedback or short-term training changes hemispheric asymmetry or ERD strength, (2) how reliable beta rebound is in hand MI compared with foot or mixed-task paradigms, and (3) large-sample evidence on user variability beyond simple left-right averages. Return only papers that provide explicit quantitative findings and clearly state whether each paper is suitable as primary evidence, secondary support, or discussion-only context for a master's thesis section on MI EEG physiology."
 
 ---
 
 ## 操作说明
-1. 请在 Undermind 中分别运行上述 4 个提示词。
-2. 将生成的报告（网页链接或导出的 Markdown/Text）反馈给我。
-3. 我将分析报告并指定 3-5 篇核心文献用于深入阅读。
+1. 当前推荐优先运行：`知识簇 4A` → `知识簇 4B`。
+2. 若需要继续补强第 2 章 `2.1` 的论证边界，再运行 `知识簇 1B`。
+3. `知识簇 2` 与 `知识簇 3` 当前已基本够用，除非要补反证或新增专题，否则可暂缓。
+4. 将生成的报告（网页链接或导出的 Markdown/Text）反馈给我。
+5. 我将分析报告并指定 3-5 篇核心文献用于深入阅读或直接转写入正文。

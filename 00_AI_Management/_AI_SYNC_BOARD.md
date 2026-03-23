@@ -16,8 +16,8 @@
 | 编辑文件路径 (File Path) | 当前责任 AI (Assigned AI) | 锁定状态 (Status) | 当前任务 / 下一步 | 最后更新时间 |
 | :--- | :--- | :--- | :--- | :--- |
 | `01_Thesis_LaTeX\data\chap01.tex` | 待分配 | `Free` | 暂无当前任务 | 2026-03-23 |
-| `01_Thesis_LaTeX\data\chap02.tex` | Codex | `Free` (最后进行理论润色) | 等待基于 Undermind 结果补强 `2.1` | 2026-03-23 |
-| `01_Thesis_LaTeX\ref\refs.bib` | Antigravity | `Free` (已修复国标与丢失条目) | 继续作为参考文献责任区 | 2026-03-18 |
+| `01_Thesis_LaTeX\data\chap02.tex` | Codex | `Free` (已完成 `2.1` 起草) | 等待 `refs.bib` 补录新 cite key 后做二轮润色 | 2026-03-23 |
+| `01_Thesis_LaTeX\ref\refs.bib` | Antigravity | `Free` (核心 MI 条目已由 Codex 按用户要求补齐) | 继续作为参考文献责任区 | 2026-03-23 |
 | `01_Thesis_LaTeX\thesis.tex` (主架构) | **严禁修改** | `LOCKED` (需用户确认) | 主入口文件，非必要不触碰 | - |
 
 ## 👥 责任分工快照 (Role Split Snapshot)
@@ -54,13 +54,16 @@
 | ID | From | To | Type | 相关文件 | 请求 / 上下文 | 状态 | 最后更新时间 |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | T001 | Codex | Antigravity | `HANDOFF` | `00_AI_Management/Input_Buffer`, `03_Literature`, `99_Archive` | 已在 `_AI_RELAY_CHAT.md` 发起“既有文献材料去留与整理建议”线程，请确认哪些旧缓存仍有活跃价值。 | `Closed` | 2026-03-23 |
+| T002 | Codex | Antigravity | `HANDOFF` | `Hardware_aware_EEG_BCI_model_optimization_evidence_report.md` | 解析硬件相关审查报告并浓缩一份 5-8 篇的最优下载清单。 | `Closed` | 2026-03-23 |
+| T002 | Codex | Antigravity | `REF_CHECK` | `01_Thesis_LaTeX/data/chap02.tex`, `01_Thesis_LaTeX/ref/refs.bib`, `00_AI_Management/Input_Buffer/MI_EEG_sensorimotor_physiology_evidence_report.md` | `[Pfu06] [Mcf04] [Zap20b] [Xu19] [Rim23b]` 等核心条目已按用户要求补入 `refs.bib` 并完成重编译；若后续需要统一键名或国标细修，可继续接管。 | `Closed` | 2026-03-23 |
+| T003 | Codex | Antigravity | `HANDOFF` | `00_AI_Management/Input_Buffer/Hardware_aware_EEG_BCI_model_optimization_evidence_report.md`, `00_AI_Management/_AI_RELAY_CHAT.md` | 已在 `_AI_RELAY_CHAT.md` 发起“硬件优化报告解析与下载清单接力”线程，请接手筛选 5-8 篇最值得下载全文的论文。 | `Closed` | 2026-03-23 |
 
 ## 🔄 当前任务接力 (Current Handoffs)
 *这里记录正在推进、即将交接或需要对方知晓的主线事项。*
 
 | 工作流 | 当前责任 AI | 当前状态 | 下一步 | 若阻塞则交给谁 |
 | :--- | :--- | :--- | :--- | :--- |
-| 第 2 章 `2.1` MI 生理基础 | Codex | 基于 Undermind 审计结果整理写作蓝图 | 等待用户继续投喂报告 / 原文后起草正文 | Antigravity 仅在引用链或编译异常时介入 |
+| 第 2 章 `2.1` MI 生理基础 | Codex | 已完成正文初稿并通过编译检查 | 等待 `refs.bib` 补录后再做二轮收束 | Antigravity 仅在引用链或编译异常时介入 |
 | 参考文献总表维护 | Antigravity | 常驻责任区 | 保持 `refs.bib` 与正文引用一致 | Codex 提供缺失条目线索 |
 | 项目版本与提交历史 | Antigravity | 常驻责任区 | 统一处理 commit / sync / 回滚策略 | 用户明确改派前不切换 |
 
