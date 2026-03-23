@@ -45,3 +45,9 @@ Desktop.ini
 # *.csv
 # *.mat
 # *.npy
+
+# Scraped Web Assets
+*_files/
+*.下載
+*.download
+
