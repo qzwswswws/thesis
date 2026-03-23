@@ -14,4 +14,8 @@
 
 *   [x] 确认 `00_AI_Management` 结构
 *   [x] 算法第 4 章初稿起草 (EdgeMIFormer)
+*   [x] 建立 Codex 最小协作工作流入口 (`_CODEX_QUICKSTART.md`)
+*   [x] 盲审视角收敛修订第 1.2 与第 2.2 节
+*   [x] 固化近期文本风格要求至 `Writing_Quality_Standards.md`
+*   [x] 固化 Undermind（知识簇1）人群与证据边界到 `Chap02_Research_Prompts.md`
 *   [ ] 执行项目健康检查与 Git 全量同步

@@ -8,7 +8,7 @@
 **重点**: 关注 C3/C4 通道的生理意义及 mu/beta 节律。
 
 > **Undermind Prompt**: 
-> "Research the neurophysiological basis of Motor Imagery (MI) EEG signals, specifically focusing on Event-Related Desynchronization (ERD) and Synchronization (ERS) in the Mu (8-13Hz) and Beta (13-30Hz) frequency bands over the C3, C4, and Cz channels. Find seminal and recent papers (2018-2024) discussing the spatial-temporal characteristics of MI signals for BCI systems."
+> "Prioritize human MI EEG physiology studies that explain C3/C4/Cz sensorimotor rhythms, Mu/Beta (8-13 Hz / 13-30 Hz), and ERD/ERS timing patterns with quantitative evidence. Allow decoding/modeling papers only when they report explicit channel, band, or time-window effects that can justify model design constraints. Keep classic left/right hand MI as the primary protocol. Include foot/tongue/multiclass MI only as secondary evidence when sensorimotor interpretation is directly transferable. Use healthy adults as the default evidence base; include stroke/ALS/rehab/patient cohorts as supporting evidence only, and explicitly mark transferability risk due to altered ERD/ERS magnitude or lateralization. When evidence conflicts, prioritize controlled physiology/protocol studies for mechanism claims, while retaining benchmark-dataset papers for engineering implications if their quantitative evidence is explicit. Prefer peer-reviewed papers from 2018-2026 and include seminal earlier works only if canonical."
 
 ---
 
