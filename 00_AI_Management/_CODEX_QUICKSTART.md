@@ -48,7 +48,7 @@
 
 ## 5. 适合开临时线程的任务
 
-- 处理 `Input_Buffer` 中的新文献或网页导出材料
+- 处理 `03_Literature` 中的新文献资料或 `Input_Buffer` 中的素材
 - 批量检查 `refs.bib` 与 `\cite{}`
 - 排查 LaTeX 编译错误、图表编号、引用格式问题
 

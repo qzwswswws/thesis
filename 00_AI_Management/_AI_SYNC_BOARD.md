@@ -15,9 +15,9 @@
 
 | 编辑文件路径 (File Path) | 当前责任 AI (Assigned AI) | 锁定状态 (Status) | 当前任务 / 下一步 | 最后更新时间 |
 | :--- | :--- | :--- | :--- | :--- |
-| `01_Thesis_LaTeX\data\chap01.tex` | 待分配 | `Free` | 暂无当前任务 | 2026-03-23 |
-| `01_Thesis_LaTeX\data\chap02.tex` | Codex | `Free` (已完成 `2.1` 起草) | 等待 `refs.bib` 补录新 cite key 后做二轮润色 | 2026-03-23 |
-| `01_Thesis_LaTeX\ref\refs.bib` | Antigravity | `Free` (核心 MI 条目已由 Codex 按用户要求补齐) | 继续作为参考文献责任区 | 2026-03-23 |
+| `01_Thesis_LaTeX\data\chap01.tex` | Codex | `Free` | 已补写“现有研究存在的不足”，后续可按统稿需要再收束 | 2026-03-26 |
+| `01_Thesis_LaTeX\data\chap02.tex` | Codex | `Free` | 第 2 章 `2.3`--`2.6` 已完成初稿并通过编译 | 2026-03-26 |
+| `01_Thesis_LaTeX\ref\refs.bib` | Antigravity | `Free` | 第 2 章新增部署 cite key 已补录，后续恢复参考文献责任区 | 2026-03-26 |
 | `01_Thesis_LaTeX\thesis.tex` (主架构) | **严禁修改** | `LOCKED` (需用户确认) | 主入口文件，非必要不触碰 | - |
 
 ## 👥 责任分工快照 (Role Split Snapshot)
@@ -61,9 +61,12 @@
 ## 🔄 当前任务接力 (Current Handoffs)
 *这里记录正在推进、即将交接或需要对方知晓的主线事项。*
 
+- **文风/排版基座已封死工作项**: 详见 `_AI_ENTRY_POINT.md`。
+- **文献库组织变革**: 论文原件现已全部转移至 **Knowledge Clusters (K1-K4)** 并统一归档于 `03_Literature/K*`。
+- **活跃报告区**: 精炼后的研报及结构化笔记现统一存于 `00_AI_Management/Input_Buffer`，不再按 `K*_Support` 分文件夹。请直接从中查阅宏观纲要或 Prompt。
 | 工作流 | 当前责任 AI | 当前状态 | 下一步 | 若阻塞则交给谁 |
 | :--- | :--- | :--- | :--- | :--- |
-| 第 2 章 `2.1` MI 生理基础 | Codex | 已完成正文初稿并通过编译检查 | 等待 `refs.bib` 补录后再做二轮收束 | Antigravity 仅在引用链或编译异常时介入 |
+| 第 2 章相关技术基础 | Codex | 已完成 `2.1`--`2.6` 初稿并通过编译 | 后续按整篇统稿再做文风与图表收束 | Antigravity 仅在引用链或编译异常时介入 |
 | 参考文献总表维护 | Antigravity | 常驻责任区 | 保持 `refs.bib` 与正文引用一致 | Codex 提供缺失条目线索 |
 | 项目版本与提交历史 | Antigravity | 常驻责任区 | 统一处理 commit / sync / 回滚策略 | 用户明确改派前不切换 |
 
@@ -76,3 +79,4 @@
 *更新记录 (Log):*
 - **[2026-03-23]**: (Antigravity) 初始化看板。确认了第二章的注意力推导公式已被 Codex 完善，且 LaTeX 编译环境通过健康检查。
 - **[2026-03-23]**: (Codex) 增补协作总原则、职责分工、受限留言队列与当前任务接力；确认 `Git` 与 `refs.bib` 默认继续由 Antigravity 负责。
+- **[2026-03-26]**: (Codex) 按用户要求完成第 2 章后半章写作，新增边缘部署、BLE 与 KS1092 采集前端技术基础，并将更适合绪论的研究不足回写至 `chap01.tex`；同步补录相关部署文献并完成整篇编译。

@@ -1,14 +1,14 @@
 # Interaction Protocol (与 Input Buffer 的交互与解析规范)
 
 ## 🎯 目的 (Purpose)
-本规范不仅确立了人类作者（USER）与 AI 助手之间在“文献解析”环节的最佳协作模式，更广义地定义了 AI 在面对 `00_AI_Management\Input_Buffer` 中各类型外部投喂数据时的标准操作程序（SOP），确保信息提取的无损与高保真。
+本规范不仅确立了人类作者（USER）与 AI 助手之间在“文献解析”环节的最佳协作模式，更广义地定义了 AI 在面对 `03_Literature` 及 `Input_Buffer` 中各类型外部投喂数据时的标准操作程序（SOP），确保信息提取的无损与高保真。
 
 ---
 
 ## 📚 1. 核心流程：文献与报告解析 (Parsing Literature & Reports)
 
 ### 👤 给人类作者的下载/投喂指南
-当您准备将文献或搜索报告放入 `Input_Buffer` 时，请**严格按照以下优先级**进行：
+当您准备将新文献放入 `03_Literature`，或将搜索报告放入 `Input_Buffer` 时，请**严格按照以下优先级**进行：
 1. **🥇 LaTeX 源码 (`.tar.gz`, `.zip`)**: 最佳。AI 可直接无损读取所有公式和网络参数。
 2. **🥈 HTML 网页 (保存为 `.html`)**: 极好。AI 可通过 DOM 树结构精准区分标题 `<h1>` 和表格 `<table>`，绝不断行。
 3. **🥉 纯文本 (`.txt`) 或 Markdown (`.md`)**: 对于 Undermind 生成的综述研报，原生的纯文本极其方便 AI 进行摘要提炼。
@@ -20,16 +20,16 @@
 2. **PDF 防断行策略**：面对只能处理的 PDF 时，**严禁**直接将粗略生成的乱码文本硬堆进最终成果中。AI 必须在后台尝试使用高级脚本（如 `PyMuPDF`）甚至大语言模型的内置文档理解能力去尽量提取结构化段落。
 3. **引经据典**：输出学术段落时，必须附带原文件中的定性推导结论或定量支撑（如延迟数据的**微秒数**、约束条件的**公式**），并在注脚明确标注文献归属。
 
-### 🧹 1.1 Input_Buffer 卫生管理 (Sanitation)
-- **阅后即焚（转移）**：为了保持 `Input_Buffer` 极度整洁、只保留当前正在执行步骤的必要内容，当你完成了一篇文献的精读与草稿生成后，必须将该文献的源文件从 `Input_Buffer` **转移（Move）**至 `03_Literature` 文件夹中。
-- **关联协议**：具体的格式处理请参照 `00_AI_Management\Prompt_Library\Reference_Management_Protocol.md`。
+### 🧹 1.1 文献库与缓存区卫生管理 (Sanitation)
+- **精准落位**：新文献原件应直接放入 `03_Literature` 对应的 K1-K4 知识簇文件夹内。`Input_Buffer` 仅保留活跃的提炼大纲、检索报告或中间 Prompt。
+- **关联协议**：具体的文献引用和格式处理请参照 `00_AI_Management\Prompt_Library\Reference_Management_Protocol.md`。
 
 ---
 
 ## 🗂️ 2. 扩充流程：其他交互规范 (Extended Interactions)
 
 ### 2.1 外部代码与算子的吸纳
-当用户在 `Input_Buffer` 中放入第三方开源代码库的部分脚本（如某论文的 GitHub PyTorch 实现）：
+当用户在工作区中放入第三方开源代码库的部分脚本（如某论文的 GitHub PyTorch 实现）：
 - AI 不应直接将第三方开源代码照搬入 `03_Methodology_Scripts`。
 - AI 必须先分析该代码片段在逻辑上如何与本项目现有的 `EdgeMIFormer` 及 NPU 量化加速（如 RK3568、PTQ约束）相融合，提出适配方案后再进变更。
 

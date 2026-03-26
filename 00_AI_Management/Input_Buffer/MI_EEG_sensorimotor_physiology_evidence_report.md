@@ -1,3 +1,9 @@
+---
+type: Evidence Report
+status: Active
+purpose: Summarizes MI EEG physiology literature for Section 2.1 drafting.
+---
+
 # MI_EEG_sensorimotor_physiology_evidence_report
 
 ##### [**Undermind**](https://undermind.ai)

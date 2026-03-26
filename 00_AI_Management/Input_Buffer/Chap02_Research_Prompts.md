@@ -1,3 +1,9 @@
+---
+type: Prompt Collection
+status: Active
+purpose: Undermind prompts for theoretical basis of Chapter 2.
+---
+
 # 第 2 章技术基础调研方案 (Undermind Prompts)
 
 基于第 4 章 EdgeMIFormer 的算法设计，第 2 章需要构建以下四个技术支柱的理论基础。请将以下提示词（建议使用英文以获得全球高质量文献）投入 Undermind 进行调研。

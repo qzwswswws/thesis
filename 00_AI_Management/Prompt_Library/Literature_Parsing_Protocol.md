@@ -1,6 +1,6 @@
 # Literature Parsing Protocol (文献解析与协作规范)
 
-当 AI 助手在 `00_AI_Management\Input_Buffer` 中检测到新放入的文献时，**必须**严格遵循以下自动化处理流程（SOP）：
+当 AI 助手在 `03_Literature` 或对应暂存区中检测到新放入的文献时，**必须**严格遵循以下自动化处理流程（SOP）：
 
 ### Step 1: 格式嗅探与优先处理 (Format Sniffing)
 1. **优先扫描** `.tex`, `.tar.gz`, `.zip` 文件。如果存在，立即解压并直接读取核心的 `.tex` 源码，跳过同名的 PDF 文件。
