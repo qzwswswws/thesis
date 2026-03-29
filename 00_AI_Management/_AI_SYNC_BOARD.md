@@ -17,7 +17,9 @@
 | :--- | :--- | :--- | :--- | :--- |
 | `01_Thesis_LaTeX\data\chap01.tex` | Codex | `Free` | 已补写“现有研究存在的不足”，后续可按统稿需要再收束 | 2026-03-26 |
 | `01_Thesis_LaTeX\data\chap02.tex` | Codex | `Free` | 第 2 章 `2.3`--`2.6` 已完成初稿并通过编译 | 2026-03-26 |
-| `01_Thesis_LaTeX\data\chap04.tex` (及相关实验章) | Codex | `LOCKED` (待 Codex 动笔) | 将 `04_Algorithm_Workbench` 的新出成果转译写入正文 | 今日期 |
+| `01_Thesis_LaTeX\data\chap03.tex` | Codex | `Free` | 已完成第 3 章首轮完整起草，新增硬件结构图、原理图与上位机界面图并通过整篇编译，后续可按整稿需要继续细修 | 2026-03-29 |
+| `01_Thesis_LaTeX\data\chap04.tex` (及相关实验章) | Codex | `Free` | 已检查并修复 Antigravity 新增改动中的公式结构与图文件编译链，整篇编译通过 | 2026-03-29 |
+| `01_Thesis_LaTeX\data\chap05.tex` | Codex | `Free` | 已归档与当前论文无关的旧 `C5-*` 图素材，完成第 5 章“系统集成与验证设计”首轮起草并通过整篇编译，后续可继续补入实时性与双导实测结果 | 2026-03-29 |
 | `01_Thesis_LaTeX\ref\refs.bib` | Antigravity | `Free` | 第 2 章新增部署 cite key 已补录，后续恢复参考文献责任区 | 2026-03-26 |
 | `01_Thesis_LaTeX\thesis.tex` (主架构) | **严禁修改** | `LOCKED` (需用户确认) | 主入口文件，非必要不触碰 | - |
 
@@ -82,3 +84,8 @@
 - **[2026-03-23]**: (Antigravity) 初始化看板。确认了第二章的注意力推导公式已被 Codex 完善，且 LaTeX 编译环境通过健康检查。
 - **[2026-03-23]**: (Codex) 增补协作总原则、职责分工、受限留言队列与当前任务接力；确认 `Git` 与 `refs.bib` 默认继续由 Antigravity 负责。
 - **[2026-03-26]**: (Codex) 按用户要求完成第 2 章后半章写作，新增边缘部署、BLE 与 KS1092 采集前端技术基础，并将更适合绪论的研究不足回写至 `chap01.tex`；同步补录相关部署文献并完成整篇编译。
+- **[2026-03-29]**: (Codex) 基于 `04_Algorithm_Workbench` 的实验汇总对 `chap04.tex` 做增量补写，明确已发表小论文与本论文补充实验的衔接关系，加入通道退化、双导任务重定义与探索性优化/KD 结果，并完成一轮编译检查。
+- **[2026-03-29]**: (Codex) 完成 `chap04.tex` 统稿深化，统一替换过程性命名与“小论文”表述，新增统一实验协议表、低通道路径比较表和图 `C4-9lowchannel_path_compare.png`，并再次通过整篇编译。
+- **[2026-03-29]**: (Codex) 检查并接住 Antigravity 对第 4 章的新修改，修复被破坏的局部注意力公式段落，编译 `C4-10_EdgeMIFormer_Arch.tex` 与 `C4-11_KD_Framework.tex` 为 PDF，并完成 `bibtex + xelatex + xelatex` 整篇编译。
+- **[2026-03-29]**: (Codex) 完成 `chap03.tex` 首轮正式起草，将双通道脑电硬件系统写成“总体架构 - 关键电路 - 固件流程 - 联调验证”结构，新增 `C3-1` 至 `C3-5` 图并完成整篇编译。
+- **[2026-03-29]**: (Codex) 已将与当前论文无关的旧 `C5-*` 图素材整体归档至 `99_Archive/Unused_Thesis_Figures/2026-03-29_Original_Chap05`，并完成 `chap05.tex` 首轮起草，写入系统集成逻辑、评价指标以及实时性/协同实验验证框架，整篇编译通过。

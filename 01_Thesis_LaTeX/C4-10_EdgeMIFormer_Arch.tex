@@ -1,0 +1,47 @@
+\documentclass[tikz,border=5pt]{standalone}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds, calc}
+
+\begin{document}
+\begin{tikzpicture}[
+    font=\sffamily\small,
+    >={Stealth[length=2mm, width=1.5mm]},
+    block/.style={rectangle, draw=blue!60, fill=blue!5, thick, text width=2.5cm, align=center, rounded corners=1mm, minimum height=1cm},
+    data/.style={rectangle, draw=gray!60, fill=gray!10, thick, text width=2cm, align=center, minimum height=0.8cm},
+    attn/.style={rectangle, draw=orange!80, fill=orange!10, thick, text width=2.8cm, align=center, rounded corners=1mm, minimum height=1.2cm},
+    pool/.style={rectangle, draw=purple!60, fill=purple!5, thick, text width=2cm, align=center, rounded corners=1mm, minimum height=0.8cm}
+]
+
+% Nodes
+\node[data] (input) {EEG Input\\$\mathbf{X} \in \mathbb{R}^{C \times T}$};
+
+\node[block, right=1.2cm of input] (tconv) {1D Temporal Conv\\(Multi-scale)};
+\node[block, right=0.8cm of tconv] (sconv) {1D Spatial Conv\\(Shared Weights)};
+
+\node[data, right=1.2cm of sconv] (feature) {Feature Sequence\\$\mathbf{Z} \in \mathbb{R}^{N \times D}$};
+
+\node[attn, right=1.2cm of feature] (lwa1) {Local-Window\\Self-Attention};
+\node[attn, right=0.8cm of lwa1] (lwa2) {Local-Window\\Self-Attention};
+
+\node[pool, right=1.2cm of lwa2] (gap) {Global Average\\Pooling};
+\node[block, right=0.8cm of gap] (fc) {Classifier\\(FC + Softmax)};
+
+\node[data, right=1.2cm of fc, fill=green!10, draw=green!60] (output) {Probabilities\\$\mathbf{Y} \in \mathbb{R}^{K}$};
+
+% Arrows
+\draw[->] (input) -- (tconv);
+\draw[->] (tconv) -- (sconv);
+\draw[->] (sconv) -- node[above] {Norm \& PE} (feature);
+\draw[->] (feature) -- (lwa1);
+\draw[->] (lwa1) -- (lwa2) node[midway, above] {\footnotesize $\times L$ layers};
+\draw[->] (lwa2) -- (gap);
+\draw[->] (gap) -- (fc);
+\draw[->] (fc) -- (output);
+
+% Residual connections
+\draw[->, dashed, orange!80, thick] (feature.south) -- ++(0,-0.8) -| (lwa1.south) node[pos=0.25, below] {Residual Connection};
+\draw[->, dashed, orange!80, thick] (lwa1.south) -- ++(0,-0.8) -| (lwa2.south);
+
+\end{tikzpicture}
+\end{document}
