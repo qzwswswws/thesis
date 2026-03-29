@@ -17,6 +17,7 @@
 | :--- | :--- | :--- | :--- | :--- |
 | `01_Thesis_LaTeX\data\chap01.tex` | Codex | `Free` | 已补写“现有研究存在的不足”，后续可按统稿需要再收束 | 2026-03-26 |
 | `01_Thesis_LaTeX\data\chap02.tex` | Codex | `Free` | 第 2 章 `2.3`--`2.6` 已完成初稿并通过编译 | 2026-03-26 |
+| `01_Thesis_LaTeX\data\chap04.tex` (及相关实验章) | Codex | `LOCKED` (待 Codex 动笔) | 将 `04_Algorithm_Workbench` 的新出成果转译写入正文 | 今日期 |
 | `01_Thesis_LaTeX\ref\refs.bib` | Antigravity | `Free` | 第 2 章新增部署 cite key 已补录，后续恢复参考文献责任区 | 2026-03-26 |
 | `01_Thesis_LaTeX\thesis.tex` (主架构) | **严禁修改** | `LOCKED` (需用户确认) | 主入口文件，非必要不触碰 | - |
 
@@ -67,6 +68,7 @@
 | 工作流 | 当前责任 AI | 当前状态 | 下一步 | 若阻塞则交给谁 |
 | :--- | :--- | :--- | :--- | :--- |
 | 第 2 章相关技术基础 | Codex | 已完成 `2.1`--`2.6` 初稿并通过编译 | 后续按整篇统稿再做文风与图表收束 | Antigravity 仅在引用链或编译异常时介入 |
+| 第 4/5 章算法实验结果与退化分析 | Codex | `Prompt已就绪` / 刚激活 | 读取新传入的 CSV/PNG，撰写基线与退化实验节，并负责生成 Banano 画图提示词 | Antigravity 已完成物料筹备并下发指令 |
 | 参考文献总表维护 | Antigravity | 常驻责任区 | 保持 `refs.bib` 与正文引用一致 | Codex 提供缺失条目线索 |
 | 项目版本与提交历史 | Antigravity | 常驻责任区 | 统一处理 commit / sync / 回滚策略 | 用户明确改派前不切换 |
 
