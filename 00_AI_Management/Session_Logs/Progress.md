@@ -71,3 +71,4 @@
 *   [x] 已重新检查项目管理区与正文区，按当前节点重写“已完成 / 未完成 / 可清理”判断，并将 `Chap01/Chap02/Chap04` 的三份过程草稿改名为 `DEL_*.md` 以便后续统一清理
 *   [x] 已新增 `00_AI_Management/Output_Drafts/Current_Node_Lookback_and_Outlook_20260329.md`，用于汇总当前节点的回顾、风险边界、未完成主线与最优下一步
 *   [x] 已新增 `00_AI_Management/Prompt_Library/LaTeX_Compilation_Protocol.md`，并在 `_AI_ENTRY_POINT.md` 中加入“论文编译与日志排障任务”路由，用于约束 Antigravity/Codex 后续的编译判断与排障动作
+*   [x] 已优化 `00_AI_Management/Prompt_Library/AIGC_Optimization_Protocol.md`，将其从“检测规避导向”收束为“学术自然化与模板痕迹消解”协议，并在 `_AI_ENTRY_POINT.md` 中加入对应任务路由
