@@ -75,9 +75,10 @@
 | 项目版本与提交历史 | Antigravity | 常驻责任区 | 统一处理 commit / sync / 回滚策略 | 用户明确改派前不切换 |
 
 ## 🚦 下一步协作计划 (Next Collaborative Steps)
-1. **Antigravity (后台支持)**: 随时待命处理 `makepdf.bat` 报错，制作 Mermaid 硬件流转图，或预处理 Python 实验脚手架代码。
-2. **Codex/Cursor (正文主笔)**: 可开始接手 `chap03.tex` 或 `chap04.tex` 的正文扩展。
-3. **安全须知**: 若遇到任何未定义的引用 `[?]`，请严格遵照 `00_AI_Management\Prompt_Library\Reference_Management_Protocol.md` 中第 4 节的排查工作流，**切勿覆盖修改 `.cls` 模板或切换为 `biblatex`**。
+1. **Antigravity (后台支持)**: 保障 `makepdf.bat` 编译、查缺补漏参考文献引用、策划 AIGC 查重规避方案。
+2. **Codex/Cursor (正文主笔)**: 接手后续章节（如第 6 章总结）的起草与全局精修润色。
+3. **降重准则 (CRITICAL)**: 在后续的所有修表述、润色任务中，**必须绝对服从 `00_AI_Management/Prompt_Library/AIGC_Optimization_Protocol.md`** 的指导。通过斩断泛滥的过渡语、构造长短句交织（Burstiness），实现降 AIGC 疑似度的效果。
+4. **安全须知**: 若遇到任何未定义的引用 `[?]`，请严格遵照 `Reference_Management_Protocol.md` 排查，避免破坏 `nudtpaper.cls` 原生格式。
 
 ---
 *更新记录 (Log):*

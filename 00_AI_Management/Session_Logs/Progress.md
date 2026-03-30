@@ -70,3 +70,4 @@
 *   [x] 已将与当前论文无关的旧 `C5-*` 图素材归档至 `99_Archive/Unused_Thesis_Figures/2026-03-29_Original_Chap05`，并完成 `chap05.tex` 首轮写作，补入系统全链路集成、评价指标、实时性实验设计与硬件--算法协同验证框架，整篇重新编译通过
 *   [x] 已重新检查项目管理区与正文区，按当前节点重写“已完成 / 未完成 / 可清理”判断，并将 `Chap01/Chap02/Chap04` 的三份过程草稿改名为 `DEL_*.md` 以便后续统一清理
 *   [x] 已新增 `00_AI_Management/Output_Drafts/Current_Node_Lookback_and_Outlook_20260329.md`，用于汇总当前节点的回顾、风险边界、未完成主线与最优下一步
+*   [x] 已新增 `00_AI_Management/Prompt_Library/LaTeX_Compilation_Protocol.md`，并在 `_AI_ENTRY_POINT.md` 中加入“论文编译与日志排障任务”路由，用于约束 Antigravity/Codex 后续的编译判断与排障动作
