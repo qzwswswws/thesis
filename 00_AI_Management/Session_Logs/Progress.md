@@ -5,16 +5,16 @@
 | **框架** | 目录及项目初始化 | [x] 已完成 | `01_Thesis_LaTeX`, `00_AI_Management` | 结构已优化，归档已建立 |
 | **阶段 1** | 绪论与背景 (Chap 1) | [x] 已完成 | `01_Thesis_LaTeX/data/chap01.tex` | 已集成高效注意力算法现状与完善文献 |
 | **阶段 2** | 技术基础 (Chap 2) | [x] 初稿完成 | `01_Thesis_LaTeX/data/chap02.tex` | `2.1`--`2.6` 已完成写作并通过编译，后续按统稿节奏再收束 |
-| **阶段 3** | 硬件系统 (Chap 3) | [/] 初稿完成 | `01_Thesis_LaTeX/data/chap03.tex` | 已完成首轮完整起草并通过编译，后续可继续补充定量测试与实物照片 |
-| **阶段 4** | 算法设计 (Chap 4) | [/] 初稿完成 | `01_Thesis_LaTeX/data/chap04.tex` | 已集成 EdgeMIFormer 核心逻辑，待绘图与润色 |
-| **阶段 5** | 实验验证 (Chap 5) | [/] 初稿启动 | `01_Thesis_LaTeX/data/chap05.tex` | 已完成系统集成与验证框架首轮起草，后续补充实时性与真实双导结果 |
+| **阶段 3** | 硬件系统 (Chap 3) | [/] 初稿完成 | `01_Thesis_LaTeX/data/chap03.tex` | 已按实测结果补写第 3 章后半部分并通过编译；实验 1/3 已落正文，实验 2 保守表述，实验 4 仍待补测 |
+| **阶段 4** | 算法设计 (Chap 4) | [/] 初稿完成 | `01_Thesis_LaTeX/data/chap04.tex` | 已集成 EdgeMIFormer 核心逻辑，并补入补充稳健性验证、通道组合与错误模式分析 |
+| **阶段 5** | 实验验证 (Chap 5) | [/] 初稿启动 | `01_Thesis_LaTeX/data/chap05.tex` | 已将主线收束为“22 导到 2 导算法落地 + 双导在线实验验证”，后续补充实时性与真实双导结果 |
 | **阶段 6** | 结论与润色 | [ ] 待启动 | 全文 | - |
 
 ## 当前节点整合判断
 
 ### 已完成主线
 
-*   论文主结构已稳定，`chap01` 至 `chap05` 均已进入可编译正文状态，整篇 `thesis.pdf` 当前为 `62` 页。
+*   论文主结构已稳定，`chap01` 至 `chap05` 均已进入可编译正文状态，整篇 `thesis.pdf` 当前为 `67` 页。
 *   第 1 章与第 2 章已具备可用初稿，第 3 章已形成完整硬件系统章节，第 4 章已形成完整算法章节，第 5 章已完成“系统集成与验证框架”首轮起草。
 *   当前论文主线已明确收束为：`运动想象解码 + 低通道硬件系统 + 边缘部署约束 + 系统级验证`。
 *   管理区内与正文已明显脱钩的过程草稿，已开始按 `DEL_` 前缀标记，便于后续统一清理。
@@ -37,6 +37,7 @@
 1. 先补第 3 章最短板的实测材料，使硬件章从“能写”变成“有证据”。
 2. 再补第 5 章与这些实测直接相关的结果，尤其是链路时延和双导真实数据验证。
 3. 随后完成第 6 章“结论与展望”，再进入全文统稿与删减阶段。
+4. “降低 AI 率 / 全文自然化”暂不作为当前主线，统一后移至终稿阶段视实际查重与评阅反馈再决定是否处理。
 
 ## 当前聚焦: **第 3 / 5 章实测补齐与全文收束**
 
@@ -71,4 +72,14 @@
 *   [x] 已重新检查项目管理区与正文区，按当前节点重写“已完成 / 未完成 / 可清理”判断，并将 `Chap01/Chap02/Chap04` 的三份过程草稿改名为 `DEL_*.md` 以便后续统一清理
 *   [x] 已新增 `00_AI_Management/Output_Drafts/Current_Node_Lookback_and_Outlook_20260329.md`，用于汇总当前节点的回顾、风险边界、未完成主线与最优下一步
 *   [x] 已新增 `00_AI_Management/Prompt_Library/LaTeX_Compilation_Protocol.md`，并在 `_AI_ENTRY_POINT.md` 中加入“论文编译与日志排障任务”路由，用于约束 Antigravity/Codex 后续的编译判断与排障动作
-*   [x] 已优化 `00_AI_Management/Prompt_Library/AIGC_Optimization_Protocol.md`，将其从“检测规避导向”收束为“学术自然化与模板痕迹消解”协议，并在 `_AI_ENTRY_POINT.md` 中加入对应任务路由
+*   [x] 已将 `00_AI_Management/Prompt_Library/AIGC_Optimization_Protocol.md` 从活跃 `Prompt_Library` 移出并归档至 `99_Archive/Prompt_Library_Archive/2026-03-30/`，同时移除 `_AI_ENTRY_POINT.md` 中对应任务路由
+*   [x] 已明确将“降低 AI 率 / 全文自然化”后移到终稿阶段处理；当前主线重新聚焦于第 3 章与第 5 章实测补齐、第 6 章写作以及整篇事实性统稿
+*   [x] 已新增 `00_AI_Management/Output_Drafts/Chap03_Hardware_Validation_Experiment_Plan_20260330.md`，将第 3 章需要补齐的硬件验证实验收束为“采集有效性、无线稳定性、端到端延迟、功耗续航”四组主实验，并给出优先级与最小可交付实验包
+*   [x] 已新增 `00_AI_Management/Output_Drafts/EEG_Headband_Status_Path_Foundation_Index_20260331.md`，将论文文件夹内与“脑电头环/便携式低通道脑电终端”相关的研究现状、路径方案与工作基础材料汇总为一份可直接查阅的索引文档，并明确当前强项在系统闭环与板级基础，短板在头环形态证据与量化实测
+*   [x] 已依据 `Chap03_Writing_Status_And_Data_Index_20260401.md` 与已完成实验结果重写第 3 章验证部分：将“脑电采集与显示功能验证”改写为含 Alpha 实验结果的“脑电采集有效性验证”，补入标签链路响应统计表与模式对比表，并将无线稳定性、供电续航明确区分为“当前可保守声称”与“后续待补测”两类结论；整篇 `makepdf.bat` 重新编译通过，`thesis.pdf` 当前为 `64` 页
+*   [x] 已基于 `02_Source_Material/04_Algorithm_Workbench/Charge` 中的补充实验与图件扩写第 4 章：新增“补充稳健性验证与误差结构分析”一节，补入多随机种子复现、`PhysioNet eegmmidb` 外部验证、`EEGNet` 最小经典对照、通道组合 pilot 与聚合混淆矩阵分析，并引入 `C4-12_confusion_matrix_key_conditions.png` 与 `C4-13_channel_combo_pilot_2class.png` 两幅新图；整篇 `makepdf.bat` 重新编译通过，`thesis.pdf` 当前为 `67` 页
+*   [x] 已按当前节点重构第 5 章叙事主线：将章节标题改为“`双导端侧系统集成与在线实验验证`”，并将前半章收束为“22 导到 2 导的算法落地路径”“在线实验基础与评价口径”“在线链路时延与推理分析”“硬件在线实验与系统验证”四个层次，明确在线实验应以 `C3/C4` 双导左右手二分类为主目标；整篇 `makepdf.bat` 重新编译通过，`thesis.pdf` 仍为 `67` 页
+*   [x] 宸插皢 `forexp/datasets.zip` 鍐呯殑 `BCI Competition IV 2b` 鏁版嵁闆嗚惤鍦拌嚦 `02_Source_Material/04_Algorithm_Workbench/datasets/`锛屽鐢?`standard_2b_strict_TE` 鍙屽鍖?MAT鏁版嵁锛屾柊澧?`pretrain_2b_transfer_local_mi.py` 瀹屾垚鈥?b 棰勮缁?+ 鏈湴涓よ疆鍙屽绂荤嚎杩佺Щ瀵规瘮鈥濓紝骞朵繚瀛樻潈閲嶈嚦 `results/2b_pretrain_transfer/weights/conformer_b2_c3c4_pretrain_2b.pt`锛涘綋鍓嶅垵姝ョ粨鏋滀负锛氶殢鏈哄垵濮嬪寲璺ㄨ疆鍧囧€?`0.5000`锛?2b 棰勮缁冨垵濮嬪寲璺ㄨ疆鍧囧€?`0.5250`
+*   [x] 宸蹭慨澶?`nearalQT` 鍦ㄧ嚎 MI 鑱斿姩榛樿瑙ｉ噴鍣ㄩ€夋嫨閫昏緫锛氫笂浣嶆満鐜板湪浼氫紭鍏堜娇鐢?`D:/pycode/cspsvm/EEG_SVM-master/EEG_SVM-master/.conda/python.exe` 浣滀负 `online_mi_round_bridge.py` 鐨?Python 鐜锛屾壘涓嶅埌鏃跺啀鍥為€€鍒扮郴缁?`python`锛屼互淇鈥滃瓙杩涚▼鍚姩浜嗕絾鍥犵己灏?torch 鑰屾棤娉曞畬鎴愯缁冣€濈殑鍦ㄧ嚎瀹為獙鍗￠】闂
+*   [x] 宸插鏈€鏂颁竴杞?`20260401_141355_mi_lr` 鍋氬揩閫熺绾垮鐩橈細浠ュ墠涓よ疆 `20260401_122743_mi_lr + 20260401_123310_mi_lr` 浣滀负璁粌闆嗭紝浣跨敤鈥?4s imagery + 8-30Hz + resample1000 + per-trial z-score鈥濋澶勭悊鍜?`ConformerB2` 杩涜绠€鐗堟祴璇曪紱缁撴灉鏄剧ず闅忔満鍒濆鍖栧潎鍊间负 `0.5000`锛?2b 棰勮缁冨垵濮嬪寲鍧囧€间负 `0.5667`锛屾彁鍗?`+0.0667`锛屽凡鏂板缓 `MI_Last_Session_Quickcheck_20260401.md`
+*   [x] 宸插杩涘叆鍦ㄧ嚎鑱斿姩闃舵鐨?4 杞?`20260401_144934_mi_lr ~ 20260401_150213_mi_lr` 鍋氱郴缁熷垎鏋愶紝鏂板缓 `MI_Online_Sessions_Analysis_20260401.md`锛屽熀浜庘€滃墠搴忚疆娆¤缁冦€佸悗涓€杞祴璇曗€濈殑绱Н璇勪及琛ㄦ槑锛氬綋鍓?4 杞湪绾挎暟鎹畬鏁存€ц壇濂斤紝浣?`2b` 棰勮缁冨垵濮嬪寲鏁翠綋骞舵湭绋冲畾浼樹簬闅忔満鍒濆鍖栵紙Baseline `0.5222` vs Pretrained `0.5167`锛夛紝褰撳墠鏇寸鍚堚€滈璁粌鍏锋湁娼滃湪甯姪浣嗘敹鐩婁粛鍙椾紶鎰熷櫒婕傜Щ涓庡皬鏍锋湰闄愬埗鈥濈殑鍒ゆ柇

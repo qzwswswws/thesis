@@ -15,11 +15,11 @@
 
 | 编辑文件路径 (File Path) | 当前责任 AI (Assigned AI) | 锁定状态 (Status) | 当前任务 / 下一步 | 最后更新时间 |
 | :--- | :--- | :--- | :--- | :--- |
-| `01_Thesis_LaTeX\data\chap01.tex` | Codex | `Free` | 已补写“现有研究存在的不足”，后续可按统稿需要再收束 | 2026-03-26 |
-| `01_Thesis_LaTeX\data\chap02.tex` | Codex | `Free` | 第 2 章 `2.3`--`2.6` 已完成初稿并通过编译 | 2026-03-26 |
-| `01_Thesis_LaTeX\data\chap03.tex` | Codex | `Free` | 已完成第 3 章首轮完整起草，新增硬件结构图、原理图与上位机界面图并通过整篇编译，后续可按整稿需要继续细修 | 2026-03-29 |
-| `01_Thesis_LaTeX\data\chap04.tex` (及相关实验章) | Codex | `Free` | 已检查并修复 Antigravity 新增改动中的公式结构与图文件编译链，整篇编译通过 | 2026-03-29 |
-| `01_Thesis_LaTeX\data\chap05.tex` | Codex | `Free` | 已归档与当前论文无关的旧 `C5-*` 图素材，完成第 5 章“系统集成与验证设计”首轮起草并通过整篇编译，后续可继续补入实时性与双导实测结果 | 2026-03-29 |
+| `01_Thesis_LaTeX\data\chap01.tex` | Codex | `Free` | 章节空闲，可继续围绕正文事实、结构与表达做常规统稿 | 2026-03-30 |
+| `01_Thesis_LaTeX\data\chap02.tex` | Codex | `Free` | 章节空闲，可继续围绕正文事实、结构与表达做常规统稿 | 2026-03-30 |
+| `01_Thesis_LaTeX\data\chap03.tex` | Codex | `Free` | 章节空闲，当前更优先补充实测材料与量化验证 | 2026-03-30 |
+| `01_Thesis_LaTeX\data\chap04.tex` (及相关实验章) | Codex | `Free` | 章节空闲，可继续围绕实验解释、图表与衔接做常规统稿 | 2026-03-30 |
+| `01_Thesis_LaTeX\data\chap05.tex` | Codex | `Free` | 章节空闲，当前更优先补充系统实时性与双导实测结果 | 2026-03-30 |
 | `01_Thesis_LaTeX\ref\refs.bib` | Antigravity | `Free` | 第 2 章新增部署 cite key 已补录，后续恢复参考文献责任区 | 2026-03-26 |
 | `01_Thesis_LaTeX\thesis.tex` (主架构) | **严禁修改** | `LOCKED` (需用户确认) | 主入口文件，非必要不触碰 | - |
 
@@ -75,18 +75,21 @@
 | 项目版本与提交历史 | Antigravity | 常驻责任区 | 统一处理 commit / sync / 回滚策略 | 用户明确改派前不切换 |
 
 ## 🚦 下一步协作计划 (Next Collaborative Steps)
-1. **Antigravity (后台支持)**: 保障 `makepdf.bat` 编译、查缺补漏参考文献引用、策划 AIGC 查重规避方案。
+1. **Antigravity (后台支持)**: 保障 `makepdf.bat` 编译、查缺补漏参考文献引用，并继续负责 Git/编译兜底责任区。
 2. **Codex/Cursor (正文主笔)**: 接手后续章节（如第 6 章总结）的起草与全局精修润色。
-3. **降重准则 (CRITICAL)**: 在后续的所有修表述、润色任务中，**必须绝对服从 `00_AI_Management/Prompt_Library/AIGC_Optimization_Protocol.md`** 的指导。通过斩断泛滥的过渡语、构造长短句交织（Burstiness），实现降 AIGC 疑似度的效果。
+3. **后期计划**: “降低 AI 率 / 全文自然化 / 查重规避”暂不作为当前主线，统一后移至实验补齐、结论完成后的终稿阶段再决定是否处理。
 4. **安全须知**: 若遇到任何未定义的引用 `[?]`，请严格遵照 `Reference_Management_Protocol.md` 排查，避免破坏 `nudtpaper.cls` 原生格式。
 
 ---
 *更新记录 (Log):*
+- **[2026-03-30]**: (Codex) 用户确认当前“降低 AI 率”方案效果不明显，相关专用 prompt 已从 `Prompt_Library` 移出并归档到 `99_Archive/Prompt_Library_Archive/2026-03-30/`；该事项后移至终稿阶段，不再作为当前强制工作流。
+- **[2026-03-30]**: (Codex) 完成第 1-5 章首轮系统性学术自然化改写，重点修复过度“降 AI”导致的生造词、翻译腔与机械承接，并对第 3-5 章的开头与小结做进一步收束；整篇 `makepdf.bat` 编译通过。
 - **[2026-03-23]**: (Antigravity) 初始化看板。确认了第二章的注意力推导公式已被 Codex 完善，且 LaTeX 编译环境通过健康检查。
 - **[2026-03-23]**: (Codex) 增补协作总原则、职责分工、受限留言队列与当前任务接力；确认 `Git` 与 `refs.bib` 默认继续由 Antigravity 负责。
 - **[2026-03-26]**: (Codex) 按用户要求完成第 2 章后半章写作，新增边缘部署、BLE 与 KS1092 采集前端技术基础，并将更适合绪论的研究不足回写至 `chap01.tex`；同步补录相关部署文献并完成整篇编译。
 - **[2026-03-29]**: (Codex) 基于 `04_Algorithm_Workbench` 的实验汇总对 `chap04.tex` 做增量补写，明确已发表小论文与本论文补充实验的衔接关系，加入通道退化、双导任务重定义与探索性优化/KD 结果，并完成一轮编译检查。
 - **[2026-03-29]**: (Codex) 完成 `chap04.tex` 统稿深化，统一替换过程性命名与“小论文”表述，新增统一实验协议表、低通道路径比较表和图 `C4-9lowchannel_path_compare.png`，并再次通过整篇编译。
 - **[2026-03-29]**: (Codex) 检查并接住 Antigravity 对第 4 章的新修改，修复被破坏的局部注意力公式段落，编译 `C4-10_EdgeMIFormer_Arch.tex` 与 `C4-11_KD_Framework.tex` 为 PDF，并完成 `bibtex + xelatex + xelatex` 整篇编译。
+- **[2026-04-01]**: (Codex) 基于 `02_Source_Material/04_Algorithm_Workbench/Charge` 的补充实验结果扩写 `chap04.tex`，新增“补充稳健性验证与误差结构分析”一节，补入多随机种子复现、`PhysioNet eegmmidb` 外部验证、`EEGNet` 最小经典对照、通道组合 pilot 与聚合混淆矩阵分析，并引入 `C4-12_confusion_matrix_key_conditions.png`、`C4-13_channel_combo_pilot_2class.png` 两幅新图；整篇重新编译通过，`thesis.pdf` 更新为 `67` 页。
 - **[2026-03-29]**: (Codex) 完成 `chap03.tex` 首轮正式起草，将双通道脑电硬件系统写成“总体架构 - 关键电路 - 固件流程 - 联调验证”结构，新增 `C3-1` 至 `C3-5` 图并完成整篇编译。
 - **[2026-03-29]**: (Codex) 已将与当前论文无关的旧 `C5-*` 图素材整体归档至 `99_Archive/Unused_Thesis_Figures/2026-03-29_Original_Chap05`，并完成 `chap05.tex` 首轮起草，写入系统集成逻辑、评价指标以及实时性/协同实验验证框架，整篇编译通过。
