@@ -51,3 +51,22 @@ Desktop.ini
 *.下載
 *.download
 
+# Editor
+.vscode/
+
+# Temporary extracts and render artifacts
+00_AI_Management/Output_Drafts/_tmp_*
+00_AI_Management/Output_Drafts/*.ppm
+00_AI_Management/Output_Drafts/tmp_fig_extract/
+00_AI_Management/Output_Drafts/opendoc_fig_extract/
+00_AI_Management/Output_Drafts/mi_runtime_test/
+
+# Large local archives and datasets
+00_AI_Management/Input_Buffer/current_s1_s8_plus_legacy_s9_controls.zip
+00_AI_Management/Input_Buffer/
+00_AI_Management/Output_Drafts/nearalQT_work/
+02_Source_Material/04_Algorithm_Workbench/Charge/
+02_Source_Material/04_Algorithm_Workbench/datasets/
+02_Source_Material/04_Algorithm_Workbench/results/2b_pretrain_transfer/
+100_remotefiles/
+
