@@ -6,42 +6,111 @@
 \begin{document}
 \begin{tikzpicture}[
     font=\sffamily\small,
-    >={Stealth[length=2mm, width=1.5mm]},
-    block/.style={rectangle, draw=blue!60, fill=blue!5, thick, text width=2.5cm, align=center, rounded corners=1mm, minimum height=1cm},
-    data/.style={rectangle, draw=gray!60, fill=gray!10, thick, text width=2cm, align=center, minimum height=0.8cm},
-    attn/.style={rectangle, draw=orange!80, fill=orange!10, thick, text width=2.8cm, align=center, rounded corners=1mm, minimum height=1.2cm},
-    pool/.style={rectangle, draw=purple!60, fill=purple!5, thick, text width=2cm, align=center, rounded corners=1mm, minimum height=0.8cm}
+    >={Stealth[length=2.2mm, width=1.8mm]},
+    data/.style={
+        rectangle,
+        draw=gray!65,
+        fill=gray!10,
+        thick,
+        text width=3.1cm,
+        align=center,
+        rounded corners=1mm,
+        minimum height=0.95cm
+    },
+    block/.style={
+        rectangle,
+        draw=blue!65,
+        fill=blue!5,
+        thick,
+        text width=3.3cm,
+        align=center,
+        rounded corners=1mm,
+        minimum height=1.1cm
+    },
+    attn/.style={
+        rectangle,
+        draw=orange!85,
+        fill=orange!10,
+        thick,
+        text width=3.4cm,
+        align=center,
+        rounded corners=1mm,
+        minimum height=1.15cm
+    },
+    head/.style={
+        rectangle,
+        draw=purple!70,
+        fill=purple!6,
+        thick,
+        text width=3.2cm,
+        align=center,
+        rounded corners=1mm,
+        minimum height=1.0cm
+    },
+    note/.style={
+        rectangle,
+        draw=gray!45,
+        fill=white,
+        dashed,
+        text width=3.0cm,
+        align=center,
+        rounded corners=1mm,
+        minimum height=0.75cm,
+        font=\sffamily\footnotesize
+    },
+    group/.style={
+        draw=black!35,
+        fill=black!2,
+        rounded corners=1.5mm,
+        inner sep=7pt
+    }
 ]
 
-% Nodes
-\node[data] (input) {EEG Input\\$\mathbf{X} \in \mathbb{R}^{C \times T}$};
+% Top row: feature embedding
+\node[data] (input) {EEG Input\\$\mathbf{X}\in\mathbb{R}^{C\times T}$};
+\node[block, right=1.0cm of input] (tconv) {Temporal Conv\\rhythm patterns};
+\node[block, right=1.0cm of tconv] (sconv) {Spatial Conv\\channel relations};
+\node[data, right=1.0cm of sconv] (seq) {Feature Sequence\\$\mathbf{Z}\in\mathbb{R}^{N\times D}$};
 
-\node[block, right=1.2cm of input] (tconv) {1D Temporal Conv\\(Multi-scale)};
-\node[block, right=0.8cm of tconv] (sconv) {1D Spatial Conv\\(Shared Weights)};
-
-\node[data, right=1.2cm of sconv] (feature) {Feature Sequence\\$\mathbf{Z} \in \mathbb{R}^{N \times D}$};
-
-\node[attn, right=1.2cm of feature] (lwa1) {Local-Window\\Self-Attention};
-\node[attn, right=0.8cm of lwa1] (lwa2) {Local-Window\\Self-Attention};
-
-\node[pool, right=1.2cm of lwa2] (gap) {Global Average\\Pooling};
-\node[block, right=0.8cm of gap] (fc) {Classifier\\(FC + Softmax)};
-
-\node[data, right=1.2cm of fc, fill=green!10, draw=green!60] (output) {Probabilities\\$\mathbf{Y} \in \mathbb{R}^{K}$};
-
-% Arrows
 \draw[->] (input) -- (tconv);
 \draw[->] (tconv) -- (sconv);
-\draw[->] (sconv) -- node[above] {Norm \& PE} (feature);
-\draw[->] (feature) -- (lwa1);
-\draw[->] (lwa1) -- (lwa2) node[midway, above] {\footnotesize $\times L$ layers};
-\draw[->] (lwa2) -- (gap);
-\draw[->] (gap) -- (fc);
+\draw[->] (sconv) -- node[above, font=\footnotesize] {Norm + PE} (seq);
+
+\begin{scope}[on background layer]
+    \node[group, fit=(input)(tconv)(sconv)(seq), label={[font=\sffamily\footnotesize]above:Spatio-temporal feature embedding}] {};
+\end{scope}
+
+% Middle row: local attention encoder
+\node[attn, below=1.6cm of tconv] (win) {Local Window\\partition};
+\node[attn, right=1.0cm of win] (attn) {Windowed\\Self-Attention};
+\node[attn, right=1.0cm of attn] (ffn) {FFN + Residual\\stacked encoder};
+\node[note, right=0.9cm of ffn] (complexity) {attention cost\\$\mathcal{O}(N\cdot k)$};
+
+\draw[->] (seq.south) |- (win.west);
+\draw[->] (win) -- (attn);
+\draw[->] (attn) -- (ffn);
+\draw[->, dashed, orange!80, thick] ($(attn.north west)+(0.08,0.20)$) -- ++(0,0.35) -| ($(ffn.north east)+(-0.08,0.20)$)
+    node[midway, above, font=\footnotesize] {residual path};
+\draw[->, dashed] (ffn) -- (complexity);
+
+\begin{scope}[on background layer]
+    \node[group, fit=(win)(attn)(ffn)(complexity), label={[font=\sffamily\footnotesize]above:Local-window self-attention encoder}] {};
+\end{scope}
+
+% Bottom row: classification head
+\node[head, below=1.6cm of win] (gap) {Global average\\pooling};
+\node[head, right=1.0cm of gap] (msp) {Multi-scale max\\pooling};
+\node[head, right=1.0cm of msp] (fc) {FC + Softmax\\classifier};
+\node[data, right=1.0cm of fc, draw=green!60, fill=green!10] (output) {Class Probabilities\\$\mathbf{Y}\in\mathbb{R}^{K}$};
+
+\draw[->] (ffn.south) |- (gap.west);
+\draw[->] (gap) -- (msp);
+\draw[->] (msp) -- (fc);
 \draw[->] (fc) -- (output);
 
-% Residual connections
-\draw[->, dashed, orange!80, thick] (feature.south) -- ++(0,-0.8) -| (lwa1.south) node[pos=0.25, below] {Residual Connection};
-\draw[->, dashed, orange!80, thick] (lwa1.south) -- ++(0,-0.8) -| (lwa2.south);
+\begin{scope}[on background layer]
+    \node[group, fit=(gap)(msp)(fc)(output), label={[font=\sffamily\footnotesize]above:Classification head}] {};
+\end{scope}
 
 \end{tikzpicture}
 \end{document}

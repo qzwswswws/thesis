@@ -1,0 +1,145 @@
+%!TEX program = xelatex
+%!BIB program = biber
+%%
+%% This is file `thesis.tex',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% nudtpaper.dtx  (with options: `thesis')
+%%
+%% This is a generated file.
+%%
+%% Copyright (C) 2020 by Liu Benyuan <liubenyuan@gmail.com>
+%%
+%% This file may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either version 1.3a
+%% of this license or (at your option) any later version.
+%% The latest version of this license is in:
+%%
+%% http://www.latex-project.org/lppl.txt
+%%
+%% and version 1.3a or later is part of all distributions of LaTeX
+%% version 2004/10/01 or later.
+%%
+%% To produce the documentation run the original source files ending with `.dtx'
+%% through LaTeX.
+%%
+%% Any Suggestions : LiuBenYuan <liubenyuan@gmail.com>
+%% Thanks Xue Ruini <xueruini@gmail.com> for the thuthesis class!
+%% Thanks sofoot for the original NUDT paper class!
+%%
+%1. 规范硕士导言
+% \documentclass[master,ttf]{nudtpaper}
+%2. 规范博士导言
+% \documentclass[doctor,twoside,ttf]{nudtpaper}
+%3. 建议使用OTF字体获得较好的页面显示效果
+%   OTF字体从网上获得，各个系统名称统一。
+%   如果你下载的是最新的(1201)OTF英文字体，建议修改nudtpaper.cls，使用
+%   Times New Roman PS Std
+% \documentclass[doctor,twoside,otf]{nudtpaper}
+%   另外，新版的论文模板提供了方正字体选项FZ，效果也不错哦
+% \documentclass[doctor,twoside,fz]{nudtpaper}
+%4. 如果想生成盲评，传递anon即可，仍需修改个人成果部分
+% \documentclass[master,otf,anon]{nudtpaper}
+%
+%5. 参考文献若用biblatex生成，则使用biber选项
+% \documentclass[master,biber]{nudtpaper}
+%
+%6. 简历中的论文和成果用biblatex参考文献方式生成，则使用resumebib选项
+% \documentclass[master,biber,resumebib]{nudtpaper}
+%
+%7. 如果是专硕，则使用prof选项
+% \documentclass[master,biber,prof]{nudtpaper}
+%
+% \documentclass[doctor,twoside,biber,resumebib,fz]{nudtpaper}
+% \documentclass[doctor,twoside,biber,resumebib,fz，anon]{nudtpaper}
+\documentclass[doctor,twoside,biber,fz, anon, ]{nudtpaper}
+\addbibresource[location=local]{ref/refs.bib}
+\usepackage{mynudt}
+
+% \usepackage[ruled]{algorithm2e}
+\newcommand*{\circled}[1]{\lower.7ex\hbox{\tikz\draw (0pt, 0pt)%
+    circle (.5em) node {\makebox[1em][c]{\small #1}};}}
+\classification{TP391}
+\serialno{22056007}
+\confidentiality{公开}
+\UDC{004}
+\title{多源脑电信号的生成式建模方法及应用}
+% \displaytitle{国防科技大学学位论文\LaTeX{}模板}
+\author{张壹帆}
+\zhdate{\zhtoday}
+\entitle{Generative Modeling Methods and Applications for Multi-source EEG Signals}
+\enauthor{Zhang Yifan}
+\endate{\entoday}
+\subject{控制科学与工程}
+\ensubject{Control Science and Engineering}
+\researchfield{脑机智能融合技术}
+\supervisor{胡德文\quad{}教授}
+\cosupervisor{曾令李\quad{}教授} % 没有就空着
+\ensupervisor{Prof. Hu Dewen}
+\encosupervisor{Prof. Zeng Ling-Li} % 没有就空着
+\papertype{工学}
+\enpapertype{Engineering}
+% 加入makenomenclature命令可用nomencl制作符号列表。
+
+
+
+\begin{document}
+\graphicspath{{figures/}}
+% 制作封面，生成目录，插入摘要，插入符号列表 \\
+% 默认符号列表使用denotation.tex，如果要使用nomencl \\
+% 需要注释掉denotation，并取消下面两个命令的注释。 \\
+% cleardoublepage% \\
+% printnomenclature% \\
+\maketitle
+\frontmatter
+
+% \let\cleardoublepage=\clearpage %章节前无需从单数页起始
+\let\cleardoublepage=\cleardoublepagewithhead %章节需从单数页起始
+\tableofcontents
+\listoftables
+\listoffigures
+
+\midmatter
+
+\definecolor{DarkGreen}{RGB}{1,50,32}
+
+\input{data/abstract}
+\input{data/denotation}
+
+%书写正文，可以根据需要增添章节; 正文还包括致谢，参考文献与成果
+\let\cleardoublepage=\cleardoublepagewithhead %章节需从单数页起始
+\mainmatter
+\input{data/chap01}
+\input{data/chap02}
+\input{data/chap03}
+\input{data/chap04}
+\input{data/chap05}
+\input{data/chap06}
+\input{data/chap07}
+% \input{data/chap08}
+\input{data/ack}
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{参考文献}
+\ifisbiber
+{\hyphenpenalty=500 %
+\tolerance=9900 %
+\renewcommand{\baselinestretch}{1.35}
+\printbibliography[heading=bibliography, title=参考文献]
+
+}
+\else
+\bibliographystyle{bstutf8}
+\bibliography{ref/refs}
+\fi
+
+\input{data/resume}
+% 最后，需要的话还要生成附录，全文随之结束。
+% \appendix
+% \backmatter
+% \input{data/appendix01}
+
+\end{document}

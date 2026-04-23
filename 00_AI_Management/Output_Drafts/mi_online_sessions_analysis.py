@@ -16,9 +16,11 @@ from scipy import signal
 
 ROOT = Path(r"C:\Users\qzwsw\Documents\thesis")
 LOG_ROOT = Path(r"C:\Users\qzwsw\Documents\nearalQT_mi_logs")
+ROOT = Path.home() / "thesis"
+LOG_ROOT = Path.home() / "nearalQT_mi_logs"
 SCRIPT_PATH = ROOT / "02_Source_Material" / "04_Algorithm_Workbench" / "scripts" / "conformer_lowchannel_b2_diff.py"
 PRETRAIN = ROOT / "02_Source_Material" / "04_Algorithm_Workbench" / "results" / "2b_pretrain_transfer" / "weights" / "conformer_b2_c3c4_pretrain_2b.pt"
-META_PATH = Path(r"C:\Users\qzwsw\Documents\nearalQT_mi_runtime\models\latest_model_meta.json")
+META_PATH = ROOT.parent / "nearalQT_mi_runtime" / "models" / "latest_model_meta.json"
 REPORT_PATH = ROOT / "00_AI_Management" / "Output_Drafts" / "MI_Online_Sessions_Analysis_20260401.md"
 
 ONLINE_SESSIONS = [
