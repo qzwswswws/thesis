@@ -18,6 +18,12 @@
 *.gz
 *.bcf
 *.xml
+*.fdb_latexmk
+*.fls
+*.xdv
+_inspect/
+提交材料_*/
+提交材料_*.zip
 
 #################
 ## Eclipse

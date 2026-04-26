@@ -2034,7 +2034,7 @@ FUNCTION {format.collection.title} {
   booktitle empty$
     { "" }
     { new.block 
-      "In " booktitle *
+      booktitle
 %       address empty$
 % 	{ skip$ }
 % 	{ bbl.comma * address * bbl.comma * 
@@ -2144,7 +2144,25 @@ FUNCTION {periodical} {
 FUNCTION {format.journal.title} {
   journal empty$
     { "" }
-    { new.block journal }
+    { new.block
+      journal
+      year empty$
+        'skip$
+        { bbl.comma * year * }
+      if$
+      volume empty$
+        'skip$
+        { bbl.comma * volume * }
+      if$
+      number empty$
+        'skip$
+        { "~(" * number * ")" * }
+      if$
+      pages empty$
+        'skip$
+        { bbl.colon * pages n.dashify * }
+      if$
+    }
   if$
 }
 
@@ -2155,8 +2173,6 @@ FUNCTION {article}
   format.authors "author" output.warn
   format.book.title "title" output.warn
   format.journal.title "journal" output.warn
-  format.year.volume.number output
-  format.pages "pages" output.warn
   format.reference.date output
   format.url output
   format.note output

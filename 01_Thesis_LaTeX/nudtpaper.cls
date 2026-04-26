@@ -96,8 +96,8 @@
 \RequirePackage{indentfirst}
 \RequirePackage{xunicode-addon}
 \RequirePackage{notoccite}
-\newcommand{\fttilde}{\fontspec{FreeSerif}\selectfont}
-\newfontfamily{\timesWinfont}{FreeSerif}
+\newcommand{\fttilde}{\fontspec{Times New Roman}\selectfont}
+\newfontfamily{\timesWinfont}{Times New Roman}
 \newcounter{numitemval}
 \newcounter{numitemslt} %selected
 \ifisbiber
@@ -169,18 +169,18 @@ pdfborder=0 1 1]{hyperref}
 
 \newcommand{\installfandol}{
     %%%% Windows Thesis Fonts
-    \setmainfont{FreeSerif}
-    \setsansfont{FreeSans}
-    \setmonofont{FreeMono}
+    \setmainfont{Times New Roman}
+    \setsansfont{Arial}
+    \setmonofont{Courier New}
     %%%% Using Fandol Family Fonts
-    \setCJKmainfont{Noto Serif CJK SC}
-    \setCJKsansfont{Noto Sans CJK SC} % Hei
-    \setCJKmonofont{Noto Serif CJK SC} % fs
+    \setCJKmainfont{FandolSong}
+    \setCJKsansfont{FandolHei} % Hei
+    \setCJKmonofont{FandolFang} % fs
     %%%% alias
-    \setCJKfamilyfont{song}{Noto Serif CJK SC}
-    \setCJKfamilyfont{hei}{Noto Sans CJK SC}
-    \setCJKfamilyfont{fs}{Noto Serif CJK SC} % fang-song
-    \setCJKfamilyfont{kai}{Noto Serif CJK SC} % Kai
+    \setCJKfamilyfont{song}{FandolSong}
+    \setCJKfamilyfont{hei}{FandolHei}
+    \setCJKfamilyfont{fs}{FandolFang} % fang-song
+    \setCJKfamilyfont{kai}{FandolKai} % Kai
 }
 
 \ifisttf
@@ -251,7 +251,7 @@ pdfborder=0 1 1]{hyperref}
 \renewcommand\zhtoday{\CJK@today}
 \newcommand\entoday{\monthname{}, \the\year}
 \geometry{top=21mm,bottom=25.5mm,left=30mm,right=30mm}
-\geometry{headheight=9mm,headsep=1mm,footskip=9mm}
+\geometry{headheight=9mm,headsep=1mm,footskip=8mm}
 \renewcommand\setheadrule[1]{%
   \ifdim#1=\z@
     \let\makeheadrule\@empty
@@ -508,6 +508,8 @@ pdfborder=0 1 1]{hyperref}
 \def\serialno#1{\def\@serialno{#1}} % 学号
 \def\UDC#1{\def\@UDC{#1}} % UDC号
 \def\confidentiality#1{\def\@confidentiality{#1}} % 密级
+\def\@coverbackpdf{}
+\def\coverbackpdf#1{\def\@coverbackpdf{#1}} % 封面背面附页
 \def\title#1{\def\@title{#1}} % 中文题目
 \newtoks\displaytitle
 \def\author#1{\def\@author{#1}}
@@ -569,8 +571,8 @@ pdfborder=0 1 1]{hyperref}
     \begin{tabular}{llcll}
     分类号  & \entry{1}{3.2cm}{\@classification} & \hspace*{4.8cm}%
     学号    & \entry{1}{3.2cm}{\@serialno}         \\[5mm]    %
-    U\ D\ C & \entry{1}{3.2cm}{\@UDC} &            \hspace*{4.8cm}
-    密级 & \entry{1}{3.2cm}{\@confidentiality}
+    ＵＤＣ　& \entry{1}{3.2cm}{\@UDC} &            \hspace*{4.8cm}
+    密级    & \entry{1}{3.2cm}{\@confidentiality}
     \end{tabular}
   }
   \par
@@ -616,14 +618,18 @@ pdfborder=0 1 1]{hyperref}
 
   \par
   \vfill
-  {\centering \cusong \sanhao \ifisanon{~}\else{国防科技大学研究生院}\fi\\[0.8em]
+  {\centering \cusong \sanhao \ifisanon{~}\else{国防科技大学}\fi\\[0.8em]
     {\@zhdate \par}%
   }
   \vspace{1mm}
-  \ifisspline%
-  \includepdf[]{a3cover/spineinthesis.pdf}
+  \ifx\@coverbackpdf\@empty%
+    \ifisspline%
+    \includepdf[pages=-,fitpaper=true,pagecommand={\thispagestyle{empty}}]{a3cover/spineinthesis.pdf}%
+    \else%
+    \cleardoublepage%
+    \fi%
   \else%
-  \cleardoublepage%
+    \includepdf[pages=-,fitpaper=true,pagecommand={\thispagestyle{empty}}]{\@coverbackpdf}%
   \fi%
   \newpage%
   \thispagestyle{empty}%
@@ -633,22 +639,20 @@ pdfborder=0 1 1]{hyperref}
   {\erhao[1.25] \@entitle \par}
   {\sanhao[1.25]
   \vfill\vfill\vfill\vfill\vfill\vfill
-  \begin{tabular}{rl}
-    Candidate:\ & {\textsf{\@enauthor}}\\
-    \@optionas{}:\ & {\textsf{\@ensupervisor}}\\
+  \begin{tabular}{c}
+    Candidate: {\textsf{\@enauthor}}\\
+    \@optionas{}: {\textsf{\@ensupervisor}}\\
     \ifx\@encosupervisor\@empty\else
-      Associate \@optionas{}:\ & {\textsf{\@encosupervisor}} \\
+      Associate \@optionas{}: {\textsf{\@encosupervisor}} \\
     \fi
   \end{tabular}}
   \vfill\vfill\vfill\vfill
   {\sanhao[1.5]
-A \ifisprof{thesis}\else{dissertation} \fi \\
+A dissertation\\
 Submitted in partial fulfillment of the requirements\\
-for the \ifisprof{professional }\else{}\fi degree of \textsf{\@optionpaperclassen{} of \@enpapertype}\\
+for the degree of \textsf{\@optionpaperclassen{} of \@enpapertype}\\
 in \textsf{\@ensubject}\\
-\makebox[\textwidth]{\ifisanon{~}\else{Graduate School of National University of %
-Defense Technology}\fi}\\
-\ifisanon{~}\else{Changsha, Hunan, P.\ R.\ China}\fi\\[5mm]
+\makebox[\textwidth]{\ifisanon{~}\else{National University of Defense Technology}\fi}\\[5mm]
 ~\@endate~
   }
   \end{center}\vfill
